@@ -38,7 +38,7 @@ def update_display(pen_down, x_scratch, y_scratch): # Отображает ми�
 def calculate_angles(x_scratch, y_scratch):
 
     # Масштаб 0.833, поворот осей (y"=X, x"=-Y) и смещение +280
-    x_real = -0.83333333 * y_scratch
+    x_real = 0.83333333 * y_scratch
     y_real = 0.83333333 * x_scratch + 280
     
     # Расчет длин нитей L1 и L2 по теореме Пифагора
@@ -96,35 +96,35 @@ try:
             points_count = 0
 
         for _ in range(points_count):
-            # Чтение X и определение состояния пера
             line_x = f.readline()
             if not line_x: break
             raw_x = float(line_x.strip())
             
-            # Если X > 500, значит перо должно быть поднято (маркер в файле)
+            # Проверяем флаг поднятого пера
             if raw_x > 500:
                 x_scratch = raw_x - 1000
-                pen_pos = 0     # Поднять
-                drawing = False
+                is_pen_up_move = True  # Это прыжок к новой линии
             else:
                 x_scratch = raw_x
-                pen_pos = 180   # Опустить
-                drawing = True
+                is_pen_up_move = False # Это обычная точка линии
             
-            # Чтение Y
             line_y = f.readline()
             if not line_y: break
             y_scratch = float(line_y.strip())
             
-            # Управление пером
-            motorC.run_target(300, pen_pos)
-            
-            # Обновление экрана и расчет движения
-            update_display(drawing, x_scratch, y_scratch)
+            # 1. Считаем углы для новой точки
+            # (ВАЖНО: Убедитесь, что y_real = 0.833 * y_scratch + 280 без инверсий)
             tgt_A, tgt_B = calculate_angles(x_scratch, y_scratch)
             
-            # Выполнение движения
-            sync_move(tgt_A, tgt_B, speed=500)
+            # 2. ЕСЛИ ЭТО ПРЫЖОК: сначала поднимаем перо, потом едем
+            if is_pen_up_move:
+                motorC.run_target(300, 0) # Поднять
+                sync_move(tgt_A, tgt_B, speed=300)
+                motorC.run_target(300, 180) # Опустить ПРИЕХАВ в начало новой линии
+            
+            # 3. ЕСЛИ ЭТО ПРОДОЛЖЕНИЕ ЛИНИИ: просто едем (перо уже внизу)
+            else:
+                sync_move(tgt_A, tgt_B, speed=500)
 
 except Exception as e:
     ev3.screen.print("Error:", e)
