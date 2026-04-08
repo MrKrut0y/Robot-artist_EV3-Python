@@ -117,23 +117,23 @@ try:
             y_scratch = float(line_y.strip())
             
             # Управление пером
-            motorC.run_target(50, pen_pos)
+            motorC.run_target(300, pen_pos)
             
             # Обновление экрана и расчет движения
             update_display(drawing, x_scratch, y_scratch)
             tgt_A, tgt_B = calculate_angles(x_scratch, y_scratch)
             
             # Выполнение движения
-            sync_move(tgt_A, tgt_B, speed=40)
+            sync_move(tgt_A, tgt_B, speed=500)
 
 except Exception as e:
     ev3.screen.print("Error:", e)
     wait(5000)
 
-motorC.run_target(50, 0) # Поднять перо
+motorC.run_target(300, 0) # Поднять перо
 
 # Возврат в физический "дом" (0,0)
 home_A, home_B = calculate_angles(0, 0)
-sync_move(home_A, home_B, speed=60)
+sync_move(home_A, home_B, speed=800)
 
 ev3.speaker.beep()
