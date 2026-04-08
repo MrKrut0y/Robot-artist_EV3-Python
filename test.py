@@ -1,4 +1,4 @@
-﻿import paramiko
+import paramiko
 import os
 import socket
 import subprocess

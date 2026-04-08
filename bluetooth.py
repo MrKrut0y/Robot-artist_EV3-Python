@@ -2,14 +2,14 @@ import socket
 import paramiko
 import os
 
-# Список стандартных IP для EV3 (Bluetooth PAN и USB)
+# РЎРїРёСЃРѕРє СЃС‚Р°РЅРґР°СЂС‚РЅС‹С… IP РґР»СЏ EV3 (Bluetooth PAN Рё USB)
 POSSIBLE_IPS = ["10.42.0.3", "169.254.1.2", "169.254.10.1", "10.0.0.1"]
 
 def find_robot_ip():
-    """Автоматический поиск активного IP-адреса робота"""
+    """РђРІС‚РѕРјР°С‚РёС‡РµСЃРєРёР№ РїРѕРёСЃРє Р°РєС‚РёРІРЅРѕРіРѕ IP-Р°РґСЂРµСЃР° СЂРѕР±РѕС‚Р°"""
     for ip in POSSIBLE_IPS:
         try:
-            # Проверяем доступность порта SSH (22)
+            # РџСЂРѕРІРµСЂСЏРµРј РґРѕСЃС‚СѓРїРЅРѕСЃС‚СЊ РїРѕСЂС‚Р° SSH (22)
             with socket.create_connection((ip, 22), timeout=0.5):
                 return ip
         except (socket.timeout, ConnectionRefusedError, OSError):
@@ -17,34 +17,34 @@ def find_robot_ip():
     return None
 
 def upload_and_run_on_ev3(local_coord_file, robot_script="main.py"):
-    """Подключение, передача координат и запуск программы на роботе"""
+    """РџРѕРґРєР»СЋС‡РµРЅРёРµ, РїРµСЂРµРґР°С‡Р° РєРѕРѕСЂРґРёРЅР°С‚ Рё Р·Р°РїСѓСЃРє РїСЂРѕРіСЂР°РјРјС‹ РЅР° СЂРѕР±РѕС‚Рµ"""
     ip = find_robot_ip()
     if not ip:
-        return False, "Робот не найден. Проверьте Bluetooth-сопряжение."
+        return False, "Р РѕР±РѕС‚ РЅРµ РЅР°Р№РґРµРЅ. РџСЂРѕРІРµСЂСЊС‚Рµ Bluetooth-СЃРѕРїСЂСЏР¶РµРЅРёРµ."
 
     transport = paramiko.Transport((ip, 22))
     try:
         transport.connect(username="robot", password="maker")
         sftp = paramiko.SFTPClient.from_transport(transport)
         
-        # Путь на роботе
+        # РџСѓС‚СЊ РЅР° СЂРѕР±РѕС‚Рµ
         remote_dir = "/home/robot/pr1"
-        sftp.execute(f"mkdir -p {remote_dir}") # Создаем папку если нет
+        sftp.execute(f"mkdir -p {remote_dir}") # РЎРѕР·РґР°РµРј РїР°РїРєСѓ РµСЃР»Рё РЅРµС‚
         
-        # Передаем файл с координатами
+        # РџРµСЂРµРґР°РµРј С„Р°Р№Р» СЃ РєРѕРѕСЂРґРёРЅР°С‚Р°РјРё
         sftp.put(local_coord_file, f"{remote_dir}/pict_coord.rtf")
         sftp.close()
 
-        # Запуск скрипта через SSH
+        # Р—Р°РїСѓСЃРє СЃРєСЂРёРїС‚Р° С‡РµСЂРµР· SSH
         ssh = paramiko.SSHClient()
         ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
         ssh.connect(ip, username="robot", password="maker")
         
-        # Запуск в фоновом режиме или с ожиданием вывода
+        # Р—Р°РїСѓСЃРє РІ С„РѕРЅРѕРІРѕРј СЂРµР¶РёРјРµ РёР»Рё СЃ РѕР¶РёРґР°РЅРёРµРј РІС‹РІРѕРґР°
         cmd = f"brickrun -r -- pybricks-micropython {remote_dir}/{robot_script}"
         ssh.exec_command(cmd)
         
-        return True, f"Успешно запущено на {ip}"
+        return True, f"РЈСЃРїРµС€РЅРѕ Р·Р°РїСѓС‰РµРЅРѕ РЅР° {ip}"
     except Exception as e:
         return False, str(e)
     finally:
