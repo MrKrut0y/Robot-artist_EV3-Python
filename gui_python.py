@@ -903,6 +903,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.critical(self, "Ошибка", f"❌ Ошибка сохранения: {e}")
 
     def save_points(self):
+        """Исправленное сохранение: координаты передаются без инверсии"""
         if not self.canvas.points:
             QMessageBox.warning(self, "Предупреждение", "Нет точек для сохранения!")
             return
@@ -911,40 +912,30 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         segment_indices = sorted(self.canvas.segments)
         
         current_idx = 0
-        for seg_idx in segment_indices:
-            if current_idx < seg_idx:
+        # Добавляем конец списка в индексы для упрощения цикла
+        all_indices = segment_indices + [len(self.canvas.points)]
+        
+        for seg_end in all_indices:
+            if current_idx < seg_end:
+                # Первая точка сегмента - поднимаем перо (PEN_UP_CODE)
                 first_point = self.canvas.points[current_idx]
-                robot_x = -first_point.y
-                robot_y = first_point.x
+                robot_x = first_point.x # Исправлено: не инвертируем
+                robot_y = first_point.y # Исправлено: не инвертируем
                 robot_data.append(int(round(robot_x)) + PEN_UP_CODE)
                 robot_data.append(int(round(robot_y)))
                 
-                for i in range(current_idx + 1, seg_idx):
+                # Остальные точки сегмента - рисуем
+                for i in range(current_idx + 1, seg_end):
                     point = self.canvas.points[i]
-                    robot_x = -point.y
-                    robot_y = point.x
-                    robot_data.append(int(round(robot_x)))
-                    robot_data.append(int(round(robot_y)))
+                    robot_data.append(int(round(point.x)))
+                    robot_data.append(int(round(point.y)))
                 
-                current_idx = seg_idx
-        
-        if current_idx < len(self.canvas.points):
-            first_point = self.canvas.points[current_idx]
-            robot_x = -first_point.y
-            robot_y = first_point.x
-            robot_data.append(int(round(robot_x)) + PEN_UP_CODE)
-            robot_data.append(int(round(robot_y)))
-            
-            for i in range(current_idx + 1, len(self.canvas.points)):
-                point = self.canvas.points[i]
-                robot_x = -point.y
-                robot_y = point.x
-                robot_data.append(int(round(robot_x)))
-                robot_data.append(int(round(robot_y)))
+                current_idx = seg_end
         
         self.save_to_file(robot_data, len(self.canvas.points))
 
     def save_image_coords(self):
+        """Исправленное сохранение контуров изображения"""
         if not self.image_canvas.contours:
             QMessageBox.warning(self, "Предупреждение", "Нет контуров для сохранения!")
             return
@@ -957,19 +948,19 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 if len(contour) < 2:
                     continue
                 
+                # Первая точка контура - поднимаем перо
                 first_point = contour[0]
-                robot_x = -first_point.y
-                robot_y = first_point.x
+                robot_x = first_point.x
+                robot_y = first_point.y
                 robot_data.append(int(round(robot_x)) + PEN_UP_CODE)
                 robot_data.append(int(round(robot_y)))
                 total_points += 1
                 
+                # Остальные точки
                 for i in range(1, len(contour)):
                     point = contour[i]
-                    robot_x = -point.y
-                    robot_y = point.x
-                    robot_data.append(int(round(robot_x)))
-                    robot_data.append(int(round(robot_y)))
+                    robot_data.append(int(round(point.x)))
+                    robot_data.append(int(round(point.y)))
                     total_points += 1
             
             self.save_to_file(robot_data, total_points, len(self.image_canvas.contours))
@@ -1033,77 +1024,67 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         QMessageBox.about(self, "О программе", help_text)
 
     def run_ev3_program(self):
+        """Метод для сохранения данных, передачи файла и запуска программы на EV3"""
         try:
-            if getattr(sys, 'frozen', False):
-                base_dir = os.path.dirname(sys.executable)
+            # 1. Сначала сохраняем актуальные координаты из текущей вкладки
+            current_tab = self.tabWidget.currentIndex()
+            if current_tab == 0:
+                self.save_points() # Для ручного рисования
             else:
-                base_dir = os.path.dirname(os.path.abspath(__file__))
-            main_file = os.path.join(base_dir, "main.py")
-            
-            if not os.path.exists(main_file):
-                QMessageBox.critical(self, "Ошибка", 
-                    f"Файл main.py не найден по пути:\n{main_file}")
+                self.save_image_coords() # Для контуров изображения
+
+            # Проверяем, создался ли файл
+            local_file = "pict_coord.rtf"
+            if not os.path.exists(local_file):
+                QMessageBox.warning(self, "Ошибка", "Файл с координатами не найден!")
                 return
+
+
+            # 2. Параметры робота
+            # ВАЖНО: Укажите здесь имя вашего робота или его адрес
+            # Для USB обычно используется адрес по умолчанию
+            EV3_DESTINATION = "/home/robot/pict_coord.rtf"
+            EV3_SCRIPT = "main.py" 
+
+            # 3. Используем библиотеку ev3_dc для передачи файла
+            # Она позволяет работать с файловой системой напрямую
+            import ev3_dc as ev3
             
-            commands = [
-                ["pybricksdev", "run", "usb", main_file],
-                ["pybricksdev", "run", "--connection-type", "usb", main_file],
-                ["pybricksdev", "run", main_file, "--connection-type", "usb"],
-            ]
-            
-            success = False
-            last_error = ""
-            
-            for cmd in commands:
-                try:
-                    result = subprocess.run(
-                        cmd,
-                        capture_output=True,
-                        text=True,
-                        timeout=30
-                    )
-                    
-                    if result.returncode == 0 or result.stdout or result.stderr:
-                        output_text = ""
-                        if result.stdout:
-                            output_text += f"STDOUT:\n{result.stdout}\n"
-                        if result.stderr:
-                            output_text += f"STDERR:\n{result.stderr}\n"
-                        
-                        if result.returncode == 0:
-                            QMessageBox.information(self, "Успех", 
-                                f"Программа успешно запущена на EV3\n\n{output_text}")
-                        else:
-                            QMessageBox.warning(self, "Предупреждение", 
-                                f"Программа завершилась с кодом {result.returncode}\n\n{output_text}")
-                        
-                        success = True
-                        break
-                        
-                except Exception as e:
-                    last_error = str(e)
-                    continue
-            
-            if not success:
-                error_msg = (
-                    "Не удалось запустить программу на EV3.\n\n"
-                    "Возможные причины:\n"
-                    "1. EV3 не подключен к компьютеру\n"
-                    "2. Не установлен pybricksdev\n"
-                    "3. Неправильная версия pybricksdev\n\n"
-                    "Установка pybricksdev:\n"
-                    "pip install pybricksdev\n\n"
-                    "Проверка подключения EV3:\n"
-                    "pybricksdev usb list\n"
+            try:
+                # Попытка подключения по Bluetooth (или USB, если настроено)
+                # Если используете USB, адрес можно не указывать или использовать 'usb'
+                my_robot = ev3.EV3(protocol=ev3.BLUETOOTH) 
+                
+                # Передаем файл данных
+                fs = ev3.FileSystem(my_robot)
+                fs.put(local_file, EV3_DESTINATION)
+                
+                # 4. Запускаем основной скрипт через pybricksdev (как вы и делали)
+                # Это самый надежный способ запустить среду MicroPython
+                if getattr(sys, 'frozen', False):
+                    base_dir = os.path.dirname(sys.executable)
+                else:
+                    base_dir = os.path.dirname(os.path.abspath(__file__))
+                main_py_path = os.path.join(base_dir, EV3_SCRIPT)
+
+                # Запуск через subprocess
+                result = subprocess.run(
+                    ["pybricksdev", "run", "usb", main_py_path],
+                    capture_output=True, text=True, timeout=60
                 )
-                
-                if last_error:
-                    error_msg += f"\nПоследняя ошибка: {last_error}"
-                
-                QMessageBox.critical(self, "Ошибка подключения", error_msg)
-                
+
+                if result.returncode == 0:
+                    QMessageBox.information(self, "Успех", "Данные обновлены, робот начал работу!")
+                else:
+                    QMessageBox.warning(self, "Ошибка запуска", result.stderr)
+
+            except Exception as e:
+                QMessageBox.critical(self, "Ошибка связи", 
+                    f"Не удалось передать файл по Bluetooth/USB.\nОшибка: {e}\n\n"
+                    "Убедитесь, что библиотека ev3-dc установлена: pip install ev3-dc")
+
         except Exception as e:
-            QMessageBox.critical(self, "Ошибка", f"Ошибка запуска: {str(e)}")
+            QMessageBox.critical(self, "Ошибка", f"Критическая ошибка: {str(e)}")
 
 
 # -----------------------------
