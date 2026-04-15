@@ -20,12 +20,8 @@ motorC = Motor(Port.C)   # Подъем/опускание пера
 last_disp_x = 0
 last_disp_y = 0
 
-def update_display(pen_down, x_scratch, y_scratch): # Отображает миниатюру рисунка на экране блока EV3.
-    
+def update_display(pen_down, x_scratch, y_scratch): 
     global last_disp_x, last_disp_y
-    
-    # Масштабирование под экран EV3 (178x128 пикселей)
-    # Центрируем координаты (-240..240, -180..180)
     x_scaled = round((x_scratch + 240) * 0.37)
     y_scaled = round((180 - y_scratch) * 0.35)
     
@@ -36,26 +32,22 @@ def update_display(pen_down, x_scratch, y_scratch): # Отображает ми�
     last_disp_y = y_scaled
 
 def calculate_angles(x_scratch, y_scratch):
-
-    # Масштаб 0.833, поворот осей (y"=X, x"=-Y) и смещение +280
-    x_real = 0.83333333 * y_scratch
-    y_real = 0.83333333 * x_scratch + 280
+    # ИСПРАВЛЕНИЕ 1: Прямое соответствие осей без поворота на 90 градусов!
+    # (Мы убрали перекрестные умножения, которые были в Scratch)
+    x_real = 0.83333333 * x_scratch
+    y_real = 0.83333333 * y_scratch + 280
     
     # Расчет длин нитей L1 и L2 по теореме Пифагора
-    # L = sqrt((B +- x)^2 + (H - y)^2)
     lenA = math.sqrt((241 + x_real)**2 + (614 - y_real)**2)
     lenB = math.sqrt((241 - x_real)**2 + (614 - y_real)**2)
     
     # Перевод изменения длины в градусы мотора
-    # 1 мм перемещения нити = 18.48 градусов поворота вала
-    # Начальная точка (0,0) соответствует максимально отпущенным нитям (660 мм)
     angle_A = (660 - lenA) * 18.48
     angle_B = (660 - lenB) * 18.48
     
     return angle_A, angle_B
 
-def sync_move(target_A, target_B, speed): # Синхронизирует движение двух моторов для линейного перемещения.
-    
+def sync_move(target_A, target_B, speed): 
     curr_A = motorA.angle()
     curr_B = motorB.angle()
     
@@ -81,7 +73,7 @@ ev3.screen.clear()
 ev3.speaker.beep()
 wait(1000)
 
-# Сброс энкодеров в стартовой точке (внизу листа)
+# Сброс энкодеров в стартовой точке
 motorA.reset_angle(0)
 motorB.reset_angle(0)
 motorC.reset_angle(0)
@@ -91,7 +83,8 @@ try:
         # Читаем первую строку (количество точек)
         header = f.readline()
         try:
-            points_count = int(''.join(filter(str.isdigit, header))) - 1
+            # ИСПРАВЛЕНИЕ 2: Убрали "- 1". Теперь считываются все точки до конца!
+            points_count = int(''.join(filter(str.isdigit, header)))
         except:
             points_count = 0
 
@@ -113,7 +106,6 @@ try:
             y_scratch = float(line_y.strip())
             
             # 1. Считаем углы для новой точки
-            # (ВАЖНО: Убедитесь, что y_real = 0.833 * y_scratch + 280 без инверсий)
             tgt_A, tgt_B = calculate_angles(x_scratch, y_scratch)
             
             # 2. ЕСЛИ ЭТО ПРЫЖОК: сначала поднимаем перо, потом едем
@@ -125,15 +117,19 @@ try:
             # 3. ЕСЛИ ЭТО ПРОДОЛЖЕНИЕ ЛИНИИ: просто едем (перо уже внизу)
             else:
                 sync_move(tgt_A, tgt_B, speed=500)
+                
+            # Обновляем миниатюру на экране
+            update_display(not is_pen_up_move, x_scratch, y_scratch)
 
 except Exception as e:
     ev3.screen.print("Error:", e)
     wait(5000)
 
-motorC.run_target(300, 0) # Поднять перо
+motorC.run_target(300, 0) # Поднять перо в конце
 
 # Возврат в физический "дом" (0,0)
 home_A, home_B = calculate_angles(0, 0)
-sync_move(home_A, home_B, speed=800)
+# ИСПРАВЛЕНИЕ 3: Снизили скорость до 300, чтобы не было бешеных рывков в конце
+sync_move(home_A, home_B, speed=500) 
 
 ev3.speaker.beep()
