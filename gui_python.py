@@ -17,14 +17,6 @@ from PyQt5.QtGui import QPainter, QPen, QBrush, QColor, QPixmap, QImage
 from PyQt5.QtCore import Qt, QPoint
 from ui_main import Ui_MainWindow
 
-# Импортируем нашу новую логику связи
-# Убедитесь, что файл bluetooth.py лежит в той же папке
-try:
-    from bluetooth import upload_and_run_on_ev3
-except ImportError:
-    upload_and_run_on_ev3 = None
-
-
 # Константы для робота-художника
 PEN_UP_CODE = 1000
 
@@ -988,36 +980,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     # ---------------------------------------------------------
     # ОБНОВЛЕННЫЙ МЕТОД ЗАПУСКА НА EV3
     # ---------------------------------------------------------
-    def run_ev3_program(self):
-        """Метод для сохранения данных, передачи файла и запуска программы на EV3 через Bluetooth"""
-        if upload_and_run_on_ev3 is None:
-            QMessageBox.critical(self, "Ошибка", "Модуль bluetooth.py не найден!")
-            return
-
-        try:
-            # 1. Сохраняем текущие координаты во временный файл
-            if self.tabWidget.currentIndex() == 0:
-                saved = self.save_points()
-            else:
-                saved = self.save_image_coords()
-
-            if not saved:
-                return
-
-            local_file = "pict_coord.rtf"
-            
-            # 2. Вызываем функцию отправки и запуска из bluetooth.py
-            # Эта функция сама найдет IP и выполнит SSH-команды
-            success, message = upload_and_run_on_ev3(local_file, "main.py")
-
-            # 3. Выводим результат в Message Box
-            if success:
-                QMessageBox.information(self, "Успех", message)
-            else:
-                QMessageBox.critical(self, "Ошибка подключения", message)
-
-        except Exception as e:
-            QMessageBox.critical(self, "Критическая ошибка", str(e))
 
 
 # -----------------------------
