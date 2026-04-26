@@ -132,4 +132,7 @@ home_A, home_B = calculate_angles(0, 0)
 # ИСПРАВЛЕНИЕ 3: Снизили скорость до 300, чтобы не было бешеных рывков в конце
 sync_move(home_A, home_B, speed=500) 
 
+motorA.run_target(300, 0, wait=False)
+motorB.run_target(300, 0, wait=True)
+
 ev3.speaker.beep()
