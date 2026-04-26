@@ -34,9 +34,11 @@ def update_display(pen_down, x_scratch, y_scratch):
     last_disp_y = y_scaled
 
 def calculate_angles(x_scratch, y_scratch):
+
+    current_scale = 0.83333333 * SCALE
   
-    x_real = (0.83333333 * SCALE) * x_scratch
-    y_real = (0.83333333 * SCALE) * y_scratch + 280
+    x_real = current_scale * x_scratch
+    y_real = (current_scale * y_scratch) + 280
     
     # Расчет длин нитей L1 и L2 по теореме Пифагора
     lenA = math.sqrt((241 + x_real)**2 + (614 - y_real)**2)
