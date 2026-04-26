@@ -1,1342 +1,1344 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>MainWindow</class>
- <widget class="QMainWindow" name="MainWindow">
-  <property name="geometry">
-   <rect>
-    <x>0</x>
-    <y>0</y>
-    <width>1064</width>
-    <height>745</height>
-   </rect>
-  </property>
-  <property name="windowTitle">
-   <string>Редактор траекторий для робота-художника</string>
-  </property>
-  <widget class="QWidget" name="centralwidget">
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
-     <widget class="QTabWidget" name="tabWidget">
-      <property name="currentIndex">
-       <number>1</number>
-      </property>
-      <widget class="QWidget" name="tab">
-       <attribute name="title">
-        <string>Рисование точек</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <widget class="QGroupBox" name="groupBox">
-          <property name="minimumSize">
-           <size>
-            <width>200</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="title">
-           <string>Управление</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout">
-           <property name="spacing">
-            <number>8</number>
-           </property>
-           <property name="leftMargin">
-            <number>10</number>
-           </property>
-           <property name="topMargin">
-            <number>15</number>
-           </property>
-           <property name="rightMargin">
-            <number>10</number>
-           </property>
-           <property name="bottomMargin">
-            <number>10</number>
-           </property>
-           <item>
-            <widget class="QPushButton" name="newLineButton">
-             <property name="minimumSize">
-              <size>
-               <width>170</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>170</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-               <weight>75</weight>
-               <bold>true</bold>
-              </font>
-             </property>
-             <property name="text">
-              <string>Новая линия 
-(Space)</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="deleteButton">
-             <property name="minimumSize">
-              <size>
-               <width>170</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>170</width>
-               <height>40</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Удалить последнюю линию
-(X)</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="clearButton">
-             <property name="minimumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Очистить всё</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="redButton">
-             <property name="minimumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Режим редактирования</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="saveButton">
-             <property name="minimumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Сохранить координаты</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="pushRun">
-             <property name="minimumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Запустить на EV3</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>10</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_3">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <item>
-              <spacer name="horizontalSpacer">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="helpButton">
-               <property name="minimumSize">
-                <size>
-                 <width>30</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>30</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">QPushButton {
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 15px;
-}
-QPushButton:hover {
-    background-color: #357abd;
-}
-QPushButton:pressed {
-    background-color: #2a5f8a;
-}</string>
-               </property>
-               <property name="text">
-                <string>?</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_2">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_2">
-          <property name="title">
-           <string>Холст робота (X: -240..240, Y: -180..180)</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_2">
-           <item>
-            <widget class="QWidget" name="canvasWidget" native="true">
-             <property name="minimumSize">
-              <size>
-               <width>480</width>
-               <height>360</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color: white;
-border: 1px solid #cccccc;</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_2">
-       <attribute name="title">
-        <string>Фото в координаты</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QGroupBox" name="groupBox_3">
-          <property name="minimumSize">
-           <size>
-            <width>200</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>200</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="title">
-           <string>Управление</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_3">
-           <property name="spacing">
-            <number>8</number>
-           </property>
-           <property name="leftMargin">
-            <number>10</number>
-           </property>
-           <property name="topMargin">
-            <number>15</number>
-           </property>
-           <property name="rightMargin">
-            <number>10</number>
-           </property>
-           <property name="bottomMargin">
-            <number>10</number>
-           </property>
-           <item>
-            <widget class="QPushButton" name="uploadButton">
-             <property name="minimumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Загрузить изображение</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="clearButton_3">
-             <property name="minimumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Очистить всё</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QPushButton" name="saveButton_3">
-             <property name="minimumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Сохранить координаты</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QFrame" name="simplifyFrame">
-             <property name="styleSheet">
-              <string notr="true">QFrame {
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    padding: 5px;
-}</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_10">
-              <item>
-               <widget class="QLabel" name="label">
-                <property name="minimumSize">
-                 <size>
-                  <width>0</width>
-                  <height>40</height>
-                 </size>
-                </property>
-                <property name="maximumSize">
-                 <size>
-                  <width>16777215</width>
-                  <height>50</height>
-                 </size>
-                </property>
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Точность упрощения 
-контуров</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QSlider" name="epsilonSlider">
-                <property name="minimum">
-                 <number>0</number>
-                </property>
-                <property name="maximum">
-                 <number>10</number>
-                </property>
-                <property name="value">
-                 <number>3</number>
-                </property>
-                <property name="orientation">
-                 <enum>Qt::Horizontal</enum>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="epsilonValueLabel">
-                <property name="minimumSize">
-                 <size>
-                  <width>40</width>
-                  <height>0</height>
-                 </size>
-                </property>
-                <property name="text">
-                 <string>0.003</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="simplifyButtonsLayout">
-                <item>
-                 <widget class="QPushButton" name="simplifyButton">
-                  <property name="minimumSize">
-                   <size>
-                    <width>100</width>
-                    <height>30</height>
-                   </size>
-                  </property>
-                  <property name="font">
-                   <font>
-                    <pointsize>10</pointsize>
-                   </font>
-                  </property>
-                  <property name="text">
-                   <string>Упростить контуры</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>10</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayout_4">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <item>
-              <spacer name="horizontalSpacer_3">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="helpButton_2">
-               <property name="minimumSize">
-                <size>
-                 <width>30</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>30</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">QPushButton {
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 15px;
-}
-QPushButton:hover {
-    background-color: #357abd;
-}
-QPushButton:pressed {
-    background-color: #2a5f8a;
-}</string>
-               </property>
-               <property name="text">
-                <string>?</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_4">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_4">
-          <property name="title">
-           <string>Холст (X: -240..240, Y: -180..180)</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_4">
-           <item>
-            <widget class="QWidget" name="imageWidget" native="true">
-             <property name="minimumSize">
-              <size>
-               <width>480</width>
-               <height>360</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>16777215</width>
-               <height>16777215</height>
-              </size>
-             </property>
-             <property name="styleSheet">
-              <string notr="true">background-color: white;
-border: 1px solid #cccccc;</string>
-             </property>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="tab_3">
-       <attribute name="title">
-        <string>Контурный экстрактор</string>
-       </attribute>
-       <layout class="QHBoxLayout" name="horizontalLayout_5">
-        <item>
-         <widget class="QGroupBox" name="groupBox_5">
-          <property name="minimumSize">
-           <size>
-            <width>250</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>250</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="title">
-           <string>Настройки</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <layout class="QVBoxLayout" name="verticalLayout_5">
-           <property name="spacing">
-            <number>8</number>
-           </property>
-           <property name="leftMargin">
-            <number>10</number>
-           </property>
-           <property name="topMargin">
-            <number>15</number>
-           </property>
-           <property name="rightMargin">
-            <number>10</number>
-           </property>
-           <property name="bottomMargin">
-            <number>10</number>
-           </property>
-           <item>
-            <widget class="QPushButton" name="loadImageButton">
-             <property name="minimumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="maximumSize">
-              <size>
-               <width>170</width>
-               <height>30</height>
-              </size>
-             </property>
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Загрузить изображение</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="imageInfoLabel">
-             <property name="font">
-              <font>
-               <pointsize>9</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Изображение не загружено</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="labelMethod">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Метод выделения:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="cannyRadio">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Canny (рекомендуется)</string>
-             </property>
-             <property name="checked">
-              <bool>true</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QRadioButton" name="thresholdRadio">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Пороговая обработка</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="QFrame" name="cannySettingsFrame">
-             <property name="styleSheet">
-              <string notr="true">QFrame {
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    padding: 5px;
-}</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_6">
-              <item>
-               <widget class="QLabel" name="labelCanny">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Порог Canny:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="threshold1Layout">
-                <item>
-                 <widget class="QLabel" name="labelThreshold1">
-                  <property name="text">
-                   <string>Нижний:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSlider" name="threshold1Slider">
-                  <property name="minimum">
-                   <number>0</number>
-                  </property>
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                  <property name="value">
-                   <number>50</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="threshold1ValueLabel">
-                  <property name="minimumSize">
-                   <size>
-                    <width>30</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>50</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="threshold2Layout">
-                <item>
-                 <widget class="QLabel" name="labelThreshold2">
-                  <property name="text">
-                   <string>Верхний:</string>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QSlider" name="threshold2Slider">
-                  <property name="minimum">
-                   <number>0</number>
-                  </property>
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                  <property name="value">
-                   <number>150</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="threshold2ValueLabel">
-                  <property name="minimumSize">
-                   <size>
-                    <width>30</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>150</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QFrame" name="thresholdSettingsFrame">
-             <property name="styleSheet">
-              <string notr="true">QFrame {
-    border: 1px solid #cccccc;
-    border-radius: 5px;
-    padding: 5px;
-}</string>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_7">
-              <item>
-               <widget class="QLabel" name="labelThresholdValue">
-                <property name="font">
-                 <font>
-                  <pointsize>10</pointsize>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Пороговое значение:</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <layout class="QHBoxLayout" name="thresholdValueLayout">
-                <item>
-                 <widget class="QSlider" name="thresholdValueSlider">
-                  <property name="minimum">
-                   <number>0</number>
-                  </property>
-                  <property name="maximum">
-                   <number>255</number>
-                  </property>
-                  <property name="value">
-                   <number>127</number>
-                  </property>
-                  <property name="orientation">
-                   <enum>Qt::Horizontal</enum>
-                  </property>
-                 </widget>
-                </item>
-                <item>
-                 <widget class="QLabel" name="thresholdValueLabel">
-                  <property name="minimumSize">
-                   <size>
-                    <width>30</width>
-                    <height>0</height>
-                   </size>
-                  </property>
-                  <property name="text">
-                   <string>127</string>
-                  </property>
-                 </widget>
-                </item>
-               </layout>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QLabel" name="labelBlur">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Размытие (уменьшение шума):</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="blurLayout">
-             <item>
-              <widget class="QCheckBox" name="blurCheckBox">
-               <property name="text">
-                <string>Включить</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSlider" name="blurSlider">
-               <property name="minimum">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <number>15</number>
-               </property>
-               <property name="value">
-                <number>5</number>
-               </property>
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="blurValueLabel">
-               <property name="minimumSize">
-                <size>
-                 <width>20</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>5</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="QLabel" name="labelQuality">
-             <property name="font">
-              <font>
-               <pointsize>10</pointsize>
-              </font>
-             </property>
-             <property name="text">
-              <string>Качество сохранения:</string>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="qualityLayout">
-             <item>
-              <widget class="QSlider" name="qualitySlider">
-               <property name="minimum">
-                <number>1</number>
-               </property>
-               <property name="maximum">
-                <number>100</number>
-               </property>
-               <property name="value">
-                <number>95</number>
-               </property>
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QLabel" name="qualityValueLabel">
-               <property name="minimumSize">
-                <size>
-                 <width>35</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <property name="text">
-                <string>95%</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="formatLayout">
-             <item>
-              <widget class="QLabel" name="labelFormat">
-               <property name="text">
-                <string>Формат:</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QComboBox" name="formatComboBox">
-               <property name="minimumSize">
-                <size>
-                 <width>80</width>
-                 <height>0</height>
-                </size>
-               </property>
-               <item>
-                <property name="text">
-                 <string>jpg</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>png</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>bmp</string>
-                </property>
-               </item>
-               <item>
-                <property name="text">
-                 <string>tiff</string>
-                </property>
-               </item>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_5">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_3">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>10</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="processButtonsLayout">
-             <item>
-              <widget class="QPushButton" name="previewButton">
-               <property name="minimumSize">
-                <size>
-                 <width>100</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Предпросмотр</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QPushButton" name="saveResultButton">
-               <property name="minimumSize">
-                <size>
-                 <width>100</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>Сохранить</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <spacer name="verticalSpacer_4">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
-             </property>
-             <property name="sizeHint" stdset="0">
-              <size>
-               <width>20</width>
-               <height>10</height>
-              </size>
-             </property>
-            </spacer>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="helpButtonLayout">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <item>
-              <spacer name="horizontalSpacer_6">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-             <item>
-              <widget class="QPushButton" name="helpButton_3">
-               <property name="minimumSize">
-                <size>
-                 <width>30</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>30</width>
-                 <height>30</height>
-                </size>
-               </property>
-               <property name="font">
-                <font>
-                 <pointsize>10</pointsize>
-                 <weight>75</weight>
-                 <bold>true</bold>
-                </font>
-               </property>
-               <property name="styleSheet">
-                <string notr="true">QPushButton {
-    background-color: #4a90e2;
-    color: white;
-    border: none;
-    border-radius: 15px;
-}
-QPushButton:hover {
-    background-color: #357abd;
-}
-QPushButton:pressed {
-    background-color: #2a5f8a;
-}</string>
-               </property>
-               <property name="text">
-                <string>?</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <spacer name="horizontalSpacer_7">
-               <property name="orientation">
-                <enum>Qt::Horizontal</enum>
-               </property>
-               <property name="sizeHint" stdset="0">
-                <size>
-                 <width>40</width>
-                 <height>20</height>
-                </size>
-               </property>
-              </spacer>
-             </item>
-            </layout>
-           </item>
-          </layout>
-         </widget>
-        </item>
-        <item>
-         <widget class="QGroupBox" name="groupBox_6">
-          <property name="title">
-           <string>Изображения</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-          <layout class="QHBoxLayout" name="horizontalLayout_6">
-           <item>
-            <widget class="QGroupBox" name="originalImageGroup">
-             <property name="title">
-              <string>Оригинальное изображение</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_8">
-              <item>
-               <widget class="QWidget" name="originalImageWidget" native="true">
-                <property name="minimumSize">
-                 <size>
-                  <width>350</width>
-                  <height>350</height>
-                 </size>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">background-color: #2b2b2b;
-border: 1px solid #cccccc;</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="originalImageInfo">
-                <property name="text">
-                 <string>Размер: -</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-           <item>
-            <widget class="QGroupBox" name="processedImageGroup">
-             <property name="title">
-              <string>Результат обработки</string>
-             </property>
-             <property name="alignment">
-              <set>Qt::AlignCenter</set>
-             </property>
-             <layout class="QVBoxLayout" name="verticalLayout_9">
-              <item>
-               <widget class="QWidget" name="processedImageWidget" native="true">
-                <property name="minimumSize">
-                 <size>
-                  <width>350</width>
-                  <height>350</height>
-                 </size>
-                </property>
-                <property name="styleSheet">
-                 <string notr="true">background-color: #2b2b2b;
-border: 1px solid #cccccc;</string>
-                </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QLabel" name="processedImageInfo">
-                <property name="text">
-                 <string>Размер: -</string>
-                </property>
-                <property name="alignment">
-                 <set>Qt::AlignCenter</set>
-                </property>
-               </widget>
-              </item>
-             </layout>
-            </widget>
-           </item>
-          </layout>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-     </widget>
-    </item>
-   </layout>
-  </widget>
-  <widget class="QMenuBar" name="menubar">
-   <property name="geometry">
-    <rect>
-     <x>0</x>
-     <y>0</y>
-     <width>1064</width>
-     <height>21</height>
-    </rect>
-   </property>
-  </widget>
-  <widget class="QStatusBar" name="statusbar"/>
- </widget>
- <resources/>
- <connections/>
+	<class>MainWindow</class>
+	<widget class="QMainWindow" name="MainWindow">
+		<property name="geometry">
+			<rect>
+				<x>0</x>
+				<y>0</y>
+				<width>1064</width>
+				<height>745</height>
+			</rect>
+		</property>
+		<property name="windowTitle">
+			<string>Редактор траекторий для робота-художника</string>
+		</property>
+		<widget class="QWidget" name="centralwidget">
+			<layout class="QGridLayout" name="gridLayout">
+				<item row="0" column="0">
+					<widget class="QTabWidget" name="tabWidget">
+						<property name="currentIndex">
+							<number>0</number>
+						</property>
+						<widget class="QWidget" name="tab">
+							<attribute name="title">
+								<string>Рисование точек</string>
+							</attribute>
+							<layout class="QHBoxLayout" name="horizontalLayout">
+								<item>
+									<widget class="QGroupBox" name="groupBox">
+										<property name="minimumSize">
+											<size>
+												<width>200</width>
+												<height>0</height>
+											</size>
+										</property>
+										<property name="maximumSize">
+											<size>
+												<width>200</width>
+												<height>16777215</height>
+											</size>
+										</property>
+										<property name="title">
+											<string>Управление</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignCenter</set>
+										</property>
+										<layout class="QVBoxLayout" name="verticalLayout">
+											<property name="spacing">
+												<number>8</number>
+											</property>
+											<property name="leftMargin">
+												<number>10</number>
+											</property>
+											<property name="topMargin">
+												<number>15</number>
+											</property>
+											<property name="rightMargin">
+												<number>10</number>
+											</property>
+											<property name="bottomMargin">
+												<number>10</number>
+											</property>
+											<item>
+												<widget class="QPushButton" name="newLineButton">
+													<property name="minimumSize">
+														<size>
+															<width>170</width>
+															<height>40</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>170</width>
+															<height>40</height>
+														</size>
+													</property>
+													<property name="font">
+														<font>
+															<pointsize>10</pointsize>
+															<weight>75</weight>
+															<bold>true</bold>
+														</font>
+													</property>
+													<property name="text">
+														<string>
+															Новая линия
+															(Space)
+														</string>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<widget class="QPushButton" name="deleteButton">
+													<property name="minimumSize">
+														<size>
+															<width>170</width>
+															<height>40</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>170</width>
+															<height>40</height>
+														</size>
+													</property>
+													<property name="font">
+														<font>
+															<pointsize>10</pointsize>
+														</font>
+													</property>
+													<property name="text">
+														<string>
+															Удалить последнюю линию
+															(X)
+														</string>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<widget class="QPushButton" name="clearButton">
+													<property name="minimumSize">
+														<size>
+															<width>170</width>
+															<height>30</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>170</width>
+															<height>30</height>
+														</size>
+													</property>
+													<property name="font">
+														<font>
+															<pointsize>10</pointsize>
+														</font>
+													</property>
+													<property name="text">
+														<string>Очистить всё</string>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<widget class="QPushButton" name="redButton">
+													<property name="minimumSize">
+														<size>
+															<width>170</width>
+															<height>30</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>170</width>
+															<height>30</height>
+														</size>
+													</property>
+													<property name="font">
+														<font>
+															<pointsize>10</pointsize>
+														</font>
+													</property>
+													<property name="text">
+														<string>Режим редактирования</string>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<widget class="QPushButton" name="saveButton">
+													<property name="minimumSize">
+														<size>
+															<width>170</width>
+															<height>30</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>170</width>
+															<height>30</height>
+														</size>
+													</property>
+													<property name="font">
+														<font>
+															<pointsize>10</pointsize>
+														</font>
+													</property>
+													<property name="text">
+														<string>Сохранить координаты</string>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<spacer name="verticalSpacer">
+													<property name="orientation">
+														<enum>Qt::Vertical</enum>
+													</property>
+													<property name="sizeHint" stdset="0">
+														<size>
+															<width>20</width>
+															<height>10</height>
+														</size>
+													</property>
+												</spacer>
+											</item>
+											<item>
+												<layout class="QHBoxLayout" name="horizontalLayout_3">
+													<property name="spacing">
+														<number>0</number>
+													</property>
+													<item>
+														<spacer name="horizontalSpacer">
+															<property name="orientation">
+																<enum>Qt::Horizontal</enum>
+															</property>
+															<property name="sizeHint" stdset="0">
+																<size>
+																	<width>40</width>
+																	<height>20</height>
+																</size>
+															</property>
+														</spacer>
+													</item>
+													<item>
+														<widget class="QPushButton" name="helpButton">
+															<property name="minimumSize">
+																<size>
+																	<width>30</width>
+																	<height>30</height>
+																</size>
+															</property>
+															<property name="maximumSize">
+																<size>
+																	<width>30</width>
+																	<height>30</height>
+																</size>
+															</property>
+															<property name="font">
+																<font>
+																	<pointsize>10</pointsize>
+																	<weight>75</weight>
+																	<bold>true</bold>
+																</font>
+															</property>
+															<property name="styleSheet">
+																<string notr="true">
+																	QPushButton {
+																	background-color: #4a90e2;
+																	color: white;
+																	border: none;
+																	border-radius: 15px;
+																	}
+																	QPushButton:hover {
+																	background-color: #357abd;
+																	}
+																	QPushButton:pressed {
+																	background-color: #2a5f8a;
+																	}
+																</string>
+															</property>
+															<property name="text">
+																<string>?</string>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<spacer name="horizontalSpacer_2">
+															<property name="orientation">
+																<enum>Qt::Horizontal</enum>
+															</property>
+															<property name="sizeHint" stdset="0">
+																<size>
+																	<width>40</width>
+																	<height>20</height>
+																</size>
+															</property>
+														</spacer>
+													</item>
+												</layout>
+											</item>
+										</layout>
+									</widget>
+								</item>
+								<item>
+									<widget class="QGroupBox" name="groupBox_2">
+										<property name="title">
+											<string>Холст робота (X: -240..240, Y: -180..180)</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignCenter</set>
+										</property>
+										<layout class="QVBoxLayout" name="verticalLayout_2">
+											<item>
+												<widget class="QWidget" name="canvasWidget" native="true">
+													<property name="minimumSize">
+														<size>
+															<width>480</width>
+															<height>360</height>
+														</size>
+													</property>
+													<property name="styleSheet">
+														<string notr="true">
+															background-color: white;
+															border: 1px solid #cccccc;
+														</string>
+													</property>
+												</widget>
+											</item>
+										</layout>
+									</widget>
+								</item>
+							</layout>
+						</widget>
+						<widget class="QWidget" name="tab_2">
+							<attribute name="title">
+								<string>Фото в координаты</string>
+							</attribute>
+							<layout class="QHBoxLayout" name="horizontalLayout_2">
+								<item>
+									<widget class="QGroupBox" name="groupBox_3">
+										<property name="minimumSize">
+											<size>
+												<width>200</width>
+												<height>0</height>
+											</size>
+										</property>
+										<property name="maximumSize">
+											<size>
+												<width>200</width>
+												<height>16777215</height>
+											</size>
+										</property>
+										<property name="title">
+											<string>Управление</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignCenter</set>
+										</property>
+										<layout class="QVBoxLayout" name="verticalLayout_3">
+											<property name="spacing">
+												<number>8</number>
+											</property>
+											<property name="leftMargin">
+												<number>10</number>
+											</property>
+											<property name="topMargin">
+												<number>15</number>
+											</property>
+											<property name="rightMargin">
+												<number>10</number>
+											</property>
+											<property name="bottomMargin">
+												<number>10</number>
+											</property>
+											<item>
+												<widget class="QPushButton" name="uploadButton">
+													<property name="minimumSize">
+														<size>
+															<width>170</width>
+															<height>30</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>170</width>
+															<height>30</height>
+														</size>
+													</property>
+													<property name="font">
+														<font>
+															<pointsize>10</pointsize>
+														</font>
+													</property>
+													<property name="text">
+														<string>Загрузить изображение</string>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<widget class="QPushButton" name="clearButton_3">
+													<property name="minimumSize">
+														<size>
+															<width>170</width>
+															<height>30</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>170</width>
+															<height>30</height>
+														</size>
+													</property>
+													<property name="font">
+														<font>
+															<pointsize>10</pointsize>
+														</font>
+													</property>
+													<property name="text">
+														<string>Очистить всё</string>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<widget class="QPushButton" name="saveButton_3">
+													<property name="minimumSize">
+														<size>
+															<width>170</width>
+															<height>30</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>170</width>
+															<height>30</height>
+														</size>
+													</property>
+													<property name="font">
+														<font>
+															<pointsize>10</pointsize>
+														</font>
+													</property>
+													<property name="text">
+														<string>Сохранить координаты</string>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<widget class="QFrame" name="simplifyFrame">
+													<property name="styleSheet">
+														<string notr="true">
+															QFrame {
+															border: 1px solid #cccccc;
+															border-radius: 5px;
+															padding: 5px;
+															}
+														</string>
+													</property>
+													<layout class="QVBoxLayout" name="verticalLayout_10">
+														<item>
+															<widget class="QLabel" name="label">
+																<property name="minimumSize">
+																	<size>
+																		<width>0</width>
+																		<height>40</height>
+																	</size>
+																</property>
+																<property name="maximumSize">
+																	<size>
+																		<width>16777215</width>
+																		<height>50</height>
+																	</size>
+																</property>
+																<property name="font">
+																	<font>
+																		<pointsize>10</pointsize>
+																	</font>
+																</property>
+																<property name="text">
+																	<string>
+																		Точность упрощения
+																		контуров
+																	</string>
+																</property>
+																<property name="alignment">
+																	<set>Qt::AlignCenter</set>
+																</property>
+															</widget>
+														</item>
+														<item>
+															<widget class="QSlider" name="epsilonSlider">
+																<property name="minimum">
+																	<number>0</number>
+																</property>
+																<property name="maximum">
+																	<number>10</number>
+																</property>
+																<property name="value">
+																	<number>3</number>
+																</property>
+																<property name="orientation">
+																	<enum>Qt::Horizontal</enum>
+																</property>
+															</widget>
+														</item>
+														<item>
+															<widget class="QLabel" name="epsilonValueLabel">
+																<property name="minimumSize">
+																	<size>
+																		<width>40</width>
+																		<height>0</height>
+																	</size>
+																</property>
+																<property name="text">
+																	<string>0.003</string>
+																</property>
+																<property name="alignment">
+																	<set>Qt::AlignCenter</set>
+																</property>
+															</widget>
+														</item>
+														<item>
+															<layout class="QHBoxLayout" name="simplifyButtonsLayout">
+																<item>
+																	<widget class="QPushButton" name="simplifyButton">
+																		<property name="minimumSize">
+																			<size>
+																				<width>100</width>
+																				<height>30</height>
+																			</size>
+																		</property>
+																		<property name="font">
+																			<font>
+																				<pointsize>10</pointsize>
+																			</font>
+																		</property>
+																		<property name="text">
+																			<string>Упростить контуры</string>
+																		</property>
+																	</widget>
+																</item>
+															</layout>
+														</item>
+													</layout>
+												</widget>
+											</item>
+											<item>
+												<spacer name="verticalSpacer_2">
+													<property name="orientation">
+														<enum>Qt::Vertical</enum>
+													</property>
+													<property name="sizeHint" stdset="0">
+														<size>
+															<width>20</width>
+															<height>10</height>
+														</size>
+													</property>
+												</spacer>
+											</item>
+											<item>
+												<layout class="QHBoxLayout" name="horizontalLayout_4">
+													<property name="spacing">
+														<number>0</number>
+													</property>
+													<item>
+														<spacer name="horizontalSpacer_3">
+															<property name="orientation">
+																<enum>Qt::Horizontal</enum>
+															</property>
+															<property name="sizeHint" stdset="0">
+																<size>
+																	<width>40</width>
+																	<height>20</height>
+																</size>
+															</property>
+														</spacer>
+													</item>
+													<item>
+														<widget class="QPushButton" name="helpButton_2">
+															<property name="minimumSize">
+																<size>
+																	<width>30</width>
+																	<height>30</height>
+																</size>
+															</property>
+															<property name="maximumSize">
+																<size>
+																	<width>30</width>
+																	<height>30</height>
+																</size>
+															</property>
+															<property name="font">
+																<font>
+																	<pointsize>10</pointsize>
+																	<weight>75</weight>
+																	<bold>true</bold>
+																</font>
+															</property>
+															<property name="styleSheet">
+																<string notr="true">
+																	QPushButton {
+																	background-color: #4a90e2;
+																	color: white;
+																	border: none;
+																	border-radius: 15px;
+																	}
+																	QPushButton:hover {
+																	background-color: #357abd;
+																	}
+																	QPushButton:pressed {
+																	background-color: #2a5f8a;
+																	}
+																</string>
+															</property>
+															<property name="text">
+																<string>?</string>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<spacer name="horizontalSpacer_4">
+															<property name="orientation">
+																<enum>Qt::Horizontal</enum>
+															</property>
+															<property name="sizeHint" stdset="0">
+																<size>
+																	<width>40</width>
+																	<height>20</height>
+																</size>
+															</property>
+														</spacer>
+													</item>
+												</layout>
+											</item>
+										</layout>
+									</widget>
+								</item>
+								<item>
+									<widget class="QGroupBox" name="groupBox_4">
+										<property name="title">
+											<string>Холст (X: -240..240, Y: -180..180)</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignCenter</set>
+										</property>
+										<layout class="QVBoxLayout" name="verticalLayout_4">
+											<item>
+												<widget class="QWidget" name="imageWidget" native="true">
+													<property name="minimumSize">
+														<size>
+															<width>480</width>
+															<height>360</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>16777215</width>
+															<height>16777215</height>
+														</size>
+													</property>
+													<property name="styleSheet">
+														<string notr="true">
+															background-color: white;
+															border: 1px solid #cccccc;
+														</string>
+													</property>
+												</widget>
+											</item>
+										</layout>
+									</widget>
+								</item>
+							</layout>
+						</widget>
+						<widget class="QWidget" name="tab_3">
+							<attribute name="title">
+								<string>Контурный экстрактор</string>
+							</attribute>
+							<layout class="QHBoxLayout" name="horizontalLayout_5">
+								<item>
+									<widget class="QGroupBox" name="groupBox_5">
+										<property name="minimumSize">
+											<size>
+												<width>250</width>
+												<height>0</height>
+											</size>
+										</property>
+										<property name="maximumSize">
+											<size>
+												<width>250</width>
+												<height>16777215</height>
+											</size>
+										</property>
+										<property name="title">
+											<string>Настройки</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignCenter</set>
+										</property>
+										<layout class="QVBoxLayout" name="verticalLayout_5">
+											<property name="spacing">
+												<number>8</number>
+											</property>
+											<property name="leftMargin">
+												<number>10</number>
+											</property>
+											<property name="topMargin">
+												<number>15</number>
+											</property>
+											<property name="rightMargin">
+												<number>10</number>
+											</property>
+											<property name="bottomMargin">
+												<number>10</number>
+											</property>
+											<item>
+												<widget class="QPushButton" name="loadImageButton">
+													<property name="minimumSize">
+														<size>
+															<width>170</width>
+															<height>30</height>
+														</size>
+													</property>
+													<property name="maximumSize">
+														<size>
+															<width>170</width>
+															<height>30</height>
+														</size>
+													</property>
+													<property name="font">
+														<font>
+															<pointsize>10</pointsize>
+														</font>
+													</property>
+													<property name="text">
+														<string>Загрузить изображение</string>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<widget class="QLabel" name="imageInfoLabel">
+													<property name="font">
+														<font>
+															<pointsize>9</pointsize>
+														</font>
+													</property>
+													<property name="text">
+														<string>Изображение не загружено</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignCenter</set>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<widget class="QLabel" name="labelMethod">
+													<property name="font">
+														<font>
+															<pointsize>10</pointsize>
+														</font>
+													</property>
+													<property name="text">
+														<string>Метод выделения:</string>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<widget class="QRadioButton" name="cannyRadio">
+													<property name="font">
+														<font>
+															<pointsize>10</pointsize>
+														</font>
+													</property>
+													<property name="text">
+														<string>Canny (рекомендуется)</string>
+													</property>
+													<property name="checked">
+														<bool>true</bool>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<widget class="QRadioButton" name="thresholdRadio">
+													<property name="font">
+														<font>
+															<pointsize>10</pointsize>
+														</font>
+													</property>
+													<property name="text">
+														<string>Пороговая обработка</string>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<widget class="QFrame" name="cannySettingsFrame">
+													<property name="styleSheet">
+														<string notr="true">
+															QFrame {
+															border: 1px solid #cccccc;
+															border-radius: 5px;
+															padding: 5px;
+															}
+														</string>
+													</property>
+													<layout class="QVBoxLayout" name="verticalLayout_6">
+														<item>
+															<widget class="QLabel" name="labelCanny">
+																<property name="font">
+																	<font>
+																		<pointsize>10</pointsize>
+																	</font>
+																</property>
+																<property name="text">
+																	<string>Порог Canny:</string>
+																</property>
+															</widget>
+														</item>
+														<item>
+															<layout class="QHBoxLayout" name="threshold1Layout">
+																<item>
+																	<widget class="QLabel" name="labelThreshold1">
+																		<property name="text">
+																			<string>Нижний:</string>
+																		</property>
+																	</widget>
+																</item>
+																<item>
+																	<widget class="QSlider" name="threshold1Slider">
+																		<property name="minimum">
+																			<number>0</number>
+																		</property>
+																		<property name="maximum">
+																			<number>255</number>
+																		</property>
+																		<property name="value">
+																			<number>50</number>
+																		</property>
+																		<property name="orientation">
+																			<enum>Qt::Horizontal</enum>
+																		</property>
+																	</widget>
+																</item>
+																<item>
+																	<widget class="QLabel" name="threshold1ValueLabel">
+																		<property name="minimumSize">
+																			<size>
+																				<width>30</width>
+																				<height>0</height>
+																			</size>
+																		</property>
+																		<property name="text">
+																			<string>50</string>
+																		</property>
+																	</widget>
+																</item>
+															</layout>
+														</item>
+														<item>
+															<layout class="QHBoxLayout" name="threshold2Layout">
+																<item>
+																	<widget class="QLabel" name="labelThreshold2">
+																		<property name="text">
+																			<string>Верхний:</string>
+																		</property>
+																	</widget>
+																</item>
+																<item>
+																	<widget class="QSlider" name="threshold2Slider">
+																		<property name="minimum">
+																			<number>0</number>
+																		</property>
+																		<property name="maximum">
+																			<number>255</number>
+																		</property>
+																		<property name="value">
+																			<number>150</number>
+																		</property>
+																		<property name="orientation">
+																			<enum>Qt::Horizontal</enum>
+																		</property>
+																	</widget>
+																</item>
+																<item>
+																	<widget class="QLabel" name="threshold2ValueLabel">
+																		<property name="minimumSize">
+																			<size>
+																				<width>30</width>
+																				<height>0</height>
+																			</size>
+																		</property>
+																		<property name="text">
+																			<string>150</string>
+																		</property>
+																	</widget>
+																</item>
+															</layout>
+														</item>
+													</layout>
+												</widget>
+											</item>
+											<item>
+												<widget class="QFrame" name="thresholdSettingsFrame">
+													<property name="styleSheet">
+														<string notr="true">
+															QFrame {
+															border: 1px solid #cccccc;
+															border-radius: 5px;
+															padding: 5px;
+															}
+														</string>
+													</property>
+													<layout class="QVBoxLayout" name="verticalLayout_7">
+														<item>
+															<widget class="QLabel" name="labelThresholdValue">
+																<property name="font">
+																	<font>
+																		<pointsize>10</pointsize>
+																	</font>
+																</property>
+																<property name="text">
+																	<string>Пороговое значение:</string>
+																</property>
+															</widget>
+														</item>
+														<item>
+															<layout class="QHBoxLayout" name="thresholdValueLayout">
+																<item>
+																	<widget class="QSlider" name="thresholdValueSlider">
+																		<property name="minimum">
+																			<number>0</number>
+																		</property>
+																		<property name="maximum">
+																			<number>255</number>
+																		</property>
+																		<property name="value">
+																			<number>127</number>
+																		</property>
+																		<property name="orientation">
+																			<enum>Qt::Horizontal</enum>
+																		</property>
+																	</widget>
+																</item>
+																<item>
+																	<widget class="QLabel" name="thresholdValueLabel">
+																		<property name="minimumSize">
+																			<size>
+																				<width>30</width>
+																				<height>0</height>
+																			</size>
+																		</property>
+																		<property name="text">
+																			<string>127</string>
+																		</property>
+																	</widget>
+																</item>
+															</layout>
+														</item>
+													</layout>
+												</widget>
+											</item>
+											<item>
+												<widget class="QLabel" name="labelBlur">
+													<property name="font">
+														<font>
+															<pointsize>10</pointsize>
+														</font>
+													</property>
+													<property name="text">
+														<string>Размытие (уменьшение шума):</string>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<layout class="QHBoxLayout" name="blurLayout">
+													<item>
+														<widget class="QCheckBox" name="blurCheckBox">
+															<property name="text">
+																<string>Включить</string>
+															</property>
+															<property name="checked">
+																<bool>true</bool>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<widget class="QSlider" name="blurSlider">
+															<property name="minimum">
+																<number>1</number>
+															</property>
+															<property name="maximum">
+																<number>15</number>
+															</property>
+															<property name="value">
+																<number>5</number>
+															</property>
+															<property name="orientation">
+																<enum>Qt::Horizontal</enum>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<widget class="QLabel" name="blurValueLabel">
+															<property name="minimumSize">
+																<size>
+																	<width>20</width>
+																	<height>0</height>
+																</size>
+															</property>
+															<property name="text">
+																<string>5</string>
+															</property>
+														</widget>
+													</item>
+												</layout>
+											</item>
+											<item>
+												<widget class="QLabel" name="labelQuality">
+													<property name="font">
+														<font>
+															<pointsize>10</pointsize>
+														</font>
+													</property>
+													<property name="text">
+														<string>Качество сохранения:</string>
+													</property>
+												</widget>
+											</item>
+											<item>
+												<layout class="QHBoxLayout" name="qualityLayout">
+													<item>
+														<widget class="QSlider" name="qualitySlider">
+															<property name="minimum">
+																<number>1</number>
+															</property>
+															<property name="maximum">
+																<number>100</number>
+															</property>
+															<property name="value">
+																<number>95</number>
+															</property>
+															<property name="orientation">
+																<enum>Qt::Horizontal</enum>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<widget class="QLabel" name="qualityValueLabel">
+															<property name="minimumSize">
+																<size>
+																	<width>35</width>
+																	<height>0</height>
+																</size>
+															</property>
+															<property name="text">
+																<string>95%</string>
+															</property>
+														</widget>
+													</item>
+												</layout>
+											</item>
+											<item>
+												<layout class="QHBoxLayout" name="formatLayout">
+													<item>
+														<widget class="QLabel" name="labelFormat">
+															<property name="text">
+																<string>Формат:</string>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<widget class="QComboBox" name="formatComboBox">
+															<property name="minimumSize">
+																<size>
+																	<width>80</width>
+																	<height>0</height>
+																</size>
+															</property>
+															<item>
+																<property name="text">
+																	<string>jpg</string>
+																</property>
+															</item>
+															<item>
+																<property name="text">
+																	<string>png</string>
+																</property>
+															</item>
+															<item>
+																<property name="text">
+																	<string>bmp</string>
+																</property>
+															</item>
+															<item>
+																<property name="text">
+																	<string>tiff</string>
+																</property>
+															</item>
+														</widget>
+													</item>
+													<item>
+														<spacer name="horizontalSpacer_5">
+															<property name="orientation">
+																<enum>Qt::Horizontal</enum>
+															</property>
+															<property name="sizeHint" stdset="0">
+																<size>
+																	<width>40</width>
+																	<height>20</height>
+																</size>
+															</property>
+														</spacer>
+													</item>
+												</layout>
+											</item>
+											<item>
+												<spacer name="verticalSpacer_3">
+													<property name="orientation">
+														<enum>Qt::Vertical</enum>
+													</property>
+													<property name="sizeHint" stdset="0">
+														<size>
+															<width>20</width>
+															<height>10</height>
+														</size>
+													</property>
+												</spacer>
+											</item>
+											<item>
+												<layout class="QHBoxLayout" name="processButtonsLayout">
+													<item>
+														<widget class="QPushButton" name="previewButton">
+															<property name="minimumSize">
+																<size>
+																	<width>100</width>
+																	<height>30</height>
+																</size>
+															</property>
+															<property name="font">
+																<font>
+																	<pointsize>10</pointsize>
+																</font>
+															</property>
+															<property name="text">
+																<string>Предпросмотр</string>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<widget class="QPushButton" name="saveResultButton">
+															<property name="minimumSize">
+																<size>
+																	<width>100</width>
+																	<height>30</height>
+																</size>
+															</property>
+															<property name="font">
+																<font>
+																	<pointsize>10</pointsize>
+																</font>
+															</property>
+															<property name="text">
+																<string>Сохранить</string>
+															</property>
+														</widget>
+													</item>
+												</layout>
+											</item>
+											<item>
+												<spacer name="verticalSpacer_4">
+													<property name="orientation">
+														<enum>Qt::Vertical</enum>
+													</property>
+													<property name="sizeHint" stdset="0">
+														<size>
+															<width>20</width>
+															<height>10</height>
+														</size>
+													</property>
+												</spacer>
+											</item>
+											<item>
+												<layout class="QHBoxLayout" name="helpButtonLayout">
+													<property name="spacing">
+														<number>0</number>
+													</property>
+													<item>
+														<spacer name="horizontalSpacer_6">
+															<property name="orientation">
+																<enum>Qt::Horizontal</enum>
+															</property>
+															<property name="sizeHint" stdset="0">
+																<size>
+																	<width>40</width>
+																	<height>20</height>
+																</size>
+															</property>
+														</spacer>
+													</item>
+													<item>
+														<widget class="QPushButton" name="helpButton_3">
+															<property name="minimumSize">
+																<size>
+																	<width>30</width>
+																	<height>30</height>
+																</size>
+															</property>
+															<property name="maximumSize">
+																<size>
+																	<width>30</width>
+																	<height>30</height>
+																</size>
+															</property>
+															<property name="font">
+																<font>
+																	<pointsize>10</pointsize>
+																	<weight>75</weight>
+																	<bold>true</bold>
+																</font>
+															</property>
+															<property name="styleSheet">
+																<string notr="true">
+																	QPushButton {
+																	background-color: #4a90e2;
+																	color: white;
+																	border: none;
+																	border-radius: 15px;
+																	}
+																	QPushButton:hover {
+																	background-color: #357abd;
+																	}
+																	QPushButton:pressed {
+																	background-color: #2a5f8a;
+																	}
+																</string>
+															</property>
+															<property name="text">
+																<string>?</string>
+															</property>
+														</widget>
+													</item>
+													<item>
+														<spacer name="horizontalSpacer_7">
+															<property name="orientation">
+																<enum>Qt::Horizontal</enum>
+															</property>
+															<property name="sizeHint" stdset="0">
+																<size>
+																	<width>40</width>
+																	<height>20</height>
+																</size>
+															</property>
+														</spacer>
+													</item>
+												</layout>
+											</item>
+										</layout>
+									</widget>
+								</item>
+								<item>
+									<widget class="QGroupBox" name="groupBox_6">
+										<property name="title">
+											<string>Изображения</string>
+										</property>
+										<property name="alignment">
+											<set>Qt::AlignCenter</set>
+										</property>
+										<layout class="QHBoxLayout" name="horizontalLayout_6">
+											<item>
+												<widget class="QGroupBox" name="originalImageGroup">
+													<property name="title">
+														<string>Оригинальное изображение</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignCenter</set>
+													</property>
+													<layout class="QVBoxLayout" name="verticalLayout_8">
+														<item>
+															<widget class="QWidget" name="originalImageWidget" native="true">
+																<property name="minimumSize">
+																	<size>
+																		<width>350</width>
+																		<height>350</height>
+																	</size>
+																</property>
+																<property name="styleSheet">
+																	<string notr="true">
+																		background-color: #2b2b2b;
+																		border: 1px solid #cccccc;
+																	</string>
+																</property>
+															</widget>
+														</item>
+														<item>
+															<widget class="QLabel" name="originalImageInfo">
+																<property name="text">
+																	<string>Размер: -</string>
+																</property>
+																<property name="alignment">
+																	<set>Qt::AlignCenter</set>
+																</property>
+															</widget>
+														</item>
+													</layout>
+												</widget>
+											</item>
+											<item>
+												<widget class="QGroupBox" name="processedImageGroup">
+													<property name="title">
+														<string>Результат обработки</string>
+													</property>
+													<property name="alignment">
+														<set>Qt::AlignCenter</set>
+													</property>
+													<layout class="QVBoxLayout" name="verticalLayout_9">
+														<item>
+															<widget class="QWidget" name="processedImageWidget" native="true">
+																<property name="minimumSize">
+																	<size>
+																		<width>350</width>
+																		<height>350</height>
+																	</size>
+																</property>
+																<property name="styleSheet">
+																	<string notr="true">
+																		background-color: #2b2b2b;
+																		border: 1px solid #cccccc;
+																	</string>
+																</property>
+															</widget>
+														</item>
+														<item>
+															<widget class="QLabel" name="processedImageInfo">
+																<property name="text">
+																	<string>Размер: -</string>
+																</property>
+																<property name="alignment">
+																	<set>Qt::AlignCenter</set>
+																</property>
+															</widget>
+														</item>
+													</layout>
+												</widget>
+											</item>
+										</layout>
+									</widget>
+								</item>
+							</layout>
+						</widget>
+					</widget>
+				</item>
+			</layout>
+		</widget>
+		<widget class="QMenuBar" name="menubar">
+			<property name="geometry">
+				<rect>
+					<x>0</x>
+					<y>0</y>
+					<width>1064</width>
+					<height>21</height>
+				</rect>
+			</property>
+		</widget>
+		<widget class="QStatusBar" name="statusbar"/>
+	</widget>
+	<resources/>
+	<connections/>
 </ui>
