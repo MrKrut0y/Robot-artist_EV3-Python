@@ -20,7 +20,6 @@ from ui_main import Ui_MainWindow
 # Константы для робота-художника
 PEN_UP_CODE = 1000
 
-
 @dataclass
 class Point:
     x: float
@@ -920,6 +919,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     robot_data.append(int(round(point.y)))
                 
                 current_idx = seg_end
+                
+        QMessageBox.information(self, "Успех", f"Точки успешно подготовлены и сохранены!\nВсего точек: {len(self.canvas.points)}")
         
         return self.save_to_file(robot_data, len(self.canvas.points))
 
@@ -946,6 +947,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                     robot_data.append(int(round(point.x)))
                     robot_data.append(int(round(point.y)))
                     total_points += 1
+
+            QMessageBox.information(self, "Успех", f"Контуры изображения сохранены!\nЛиний: {len(self.image_canvas.contours)}\nВсего точек: {total_points}")
             
             return self.save_to_file(robot_data, total_points, len(self.image_canvas.contours))
         except Exception as e:
@@ -969,7 +972,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             <li>Упрощение контуров для оптимизации траектории</li>
             <li>Контурный экстрактор - выделение контуров на изображениях</li>
             <li>Сохранение координат в файл для передачи на робота</li>
-            <li>Запуск программы на EV3 по Bluetooth</li>
         </ul>
         
         <p><i>© 2026 Робот-художник</i></p>    
