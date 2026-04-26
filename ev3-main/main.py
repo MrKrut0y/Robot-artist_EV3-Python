@@ -11,6 +11,8 @@ import math
 # Инициализация контроллера и периферии
 ev3 = EV3Brick()
 
+SCALE = 1.3
+
 # Конфигурация моторов
 motorA = Motor(Port.A)   # Левая нить
 motorB = Motor(Port.B)   # Правая нить
@@ -32,10 +34,9 @@ def update_display(pen_down, x_scratch, y_scratch):
     last_disp_y = y_scaled
 
 def calculate_angles(x_scratch, y_scratch):
-    # ИСПРАВЛЕНИЕ 1: Прямое соответствие осей без поворота на 90 градусов!
-    # (Мы убрали перекрестные умножения, которые были в Scratch)
-    x_real = 0.83333333 * x_scratch
-    y_real = 0.83333333 * y_scratch + 280
+  
+    x_real = (0.83333333 * SCALE) * x_scratch
+    y_real = (0.83333333 * SCALE) * y_scratch + 280
     
     # Расчет длин нитей L1 и L2 по теореме Пифагора
     lenA = math.sqrt((241 + x_real)**2 + (614 - y_real)**2)
