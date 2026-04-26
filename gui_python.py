@@ -591,7 +591,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
         # Подключение кнопок первой вкладки
         self.saveButton.clicked.connect(self.save_points)
-        self.pushRun.clicked.connect(self.run_ev3_program)
         self.clearButton.clicked.connect(self.clear_all_points)
         self.redButton.clicked.connect(self.toggle_edit_mode)
         self.newLineButton.clicked.connect(self.canvas.new_line)
