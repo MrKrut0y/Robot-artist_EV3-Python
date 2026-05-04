@@ -21,7 +21,7 @@
 
 ---
 
-## Подготовка и запуск робота
+## [Подготовка и запуск робота](https://github.com/MrKrut0y/Robot-artist_EV3-Python/blob/main/dop/getting-started-with-micropython-v2_enus.pdf)
 
 Процесс подготовки разделен на два этапа: прошивка системы и загрузка рабочей программы.
 
