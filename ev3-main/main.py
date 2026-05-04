@@ -30,13 +30,13 @@ motorC = Motor(Port.C)   # Подъем/опускание пера
 last_disp_x = 0
 last_disp_y = 0
 
-def update_display(pen_down, x_scratch, y_scratch):
+def update_display(pen_down, x, y):
   
   # Отображает процесс рисования на экране EV3 в реальном времени.
   
     global last_disp_x, last_disp_y
-    x_scaled = round((x_scratch + 240) * 0.37)
-    y_scaled = round((180 - y_scratch) * 0.35)
+    x_scaled = round((x + 240) * 0.37)
+    y_scaled = round((180 - y) * 0.35)
     
     if pen_down:
         ev3.screen.draw_line(last_disp_x, last_disp_y, x_scaled, y_scaled)
@@ -44,7 +44,7 @@ def update_display(pen_down, x_scratch, y_scratch):
     last_disp_x = x_scaled
     last_disp_y = y_scaled
 
-def calculate_angles(x_scratch, y_scratch):
+def calculate_angles(x, y):
   
   # Преобразует декартовы координаты (X, Y) в углы поворота моторов.
   # Использует обратную кинематику для V-plotter систем.
@@ -52,8 +52,8 @@ def calculate_angles(x_scratch, y_scratch):
     # Масштабирование координат
     current_scale = 0.83333333 * SCALE
   
-    x_real = current_scale * x_scratch
-    y_real = (current_scale * y_scratch) + 280 # +280 - базовый отступ вниз от оси моторов
+    x_real = current_scale * x
+    y_real = (current_scale * y) + 280 # +280 - базовый отступ вниз от оси моторов
     
     # Расчет требуемой длины нитей (Пифагор)
     # 241 - расстояние от центра до мотора по горизонтали
@@ -120,18 +120,18 @@ try:
             
             # Распознавание кода "поднятого пера" (> 500)
             if raw_x > 500:
-                x_scratch = raw_x - 1000
+                x = raw_x - 1000
                 is_pen_up_move = True  # Это прыжок к новой линии
             else:
-                x_scratch = raw_x
+                x = raw_x
                 is_pen_up_move = False # Это обычная точка линии
             
             line_y = f.readline()
             if not line_y: break
-            y_scratch = float(line_y.strip())
+            y = float(line_y.strip())
             
             # 1. Считаем углы для новой точки
-            tgt_A, tgt_B = calculate_angles(x_scratch, y_scratch)
+            tgt_A, tgt_B = calculate_angles(x, y)
             
             # 2. ЕСЛИ ЭТО ПРЫЖОК: сначала поднимаем перо, потом едем
             if is_pen_up_move:
@@ -145,7 +145,7 @@ try:
                 sync_move(tgt_A, tgt_B, speed=DRAW_SPEED)
                 
             # Обновляем миниатюру на экране
-            update_display(not is_pen_up_move, x_scratch, y_scratch)
+            update_display(not is_pen_up_move, x, y)
 
 except Exception as e:
     ev3.screen.print("Error:", e)
