@@ -17,7 +17,7 @@
 *   **Язык интерфейса**: Python 3.10+
 *   **GUI Framework**: PyQt5
 *   **Image Processing**: OpenCV (cv2), NumPy
-*   **IDE для загрузки**: Visual Studio Code + расширение "LEGO® MINDSTORMS® EV3 Home Edition"
+*   **IDE для загрузки**: Visual Studio Code + расширение ["LEGO® MINDSTORMS® EV3 MicroPython"](https://marketplace.visualstudio.com/items?itemName=lego-education.ev3-micropython)
 
 ---
 
@@ -27,9 +27,10 @@
 
 ### 1. Подготовка контроллера EV3
 
-1.  Скачайте образ прошивки **Pybricks MicroPython**.
-2.  Запишите образ на microSD карту с помощью утилиты (например, Etcher).
-3.  Вставьте карту в выключенный EV3 и включите его. Дождитесь завершения загрузки.
+1.  [Иструкция по сборке робота](https://github.com/MrKrut0y/Robot-artist_EV3-Python/tree/main/dop/Инструкция%20по%20сборке%20робота)
+2.  Скачайте образ прошивки [**Pybricks MicroPython**](https://education.lego.com/en-us/product-resources/mindstorms-ev3/teacher-resources/python-for-ev3/).
+3.  Запишите образ на microSD карту с помощью утилиты (например, Etcher).
+4.  Вставьте карту в выключенный EV3 и включите его. Дождитесь завершения загрузки.
 
 ### 2. Загрузка программы и данных
 
@@ -52,7 +53,7 @@
 *   **Port B**: Большой мотор (Правый привод нити)
 *   **Port C**: Средний мотор (Механизм подъема маркера)
 
-### Математическая база
+### [Математическая база](https://github.com/MrKrut0y/Robot-artist_EV3-Python/blob/main/dop/кинематич.схема.pdf)
 
 Программа рассчитывает положение пера на основе инверсной кинематики для V-образного подвеса:
 
@@ -63,7 +64,7 @@
 
 *   **Перевод в углы моторов**: Используется коэффициент **18.48** (градусов на 1 мм пути), рассчитанный исходя из диаметра барабана 6.2 мм.
 
-### Преобразование координат
+### [Преобразование координат](https://github.com/MrKrut0y/Robot-artist_EV3-Python/blob/main/dop/Пересчет%20координат.pdf)
 
 Для корректного отображения и учета физических ограничений робота применяется масштабирование и смещение:
 
