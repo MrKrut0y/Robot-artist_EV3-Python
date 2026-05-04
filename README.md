@@ -18,6 +18,7 @@
 *   **GUI Framework**: PyQt5
 *   **Image Processing**: OpenCV (cv2), NumPy
 *   **IDE для загрузки**: Visual Studio Code + расширение ["LEGO® MINDSTORMS® EV3 MicroPython"](https://marketplace.visualstudio.com/items?itemName=lego-education.ev3-micropython)
+*   Чтобы установить все зависимости, выполните: pip install -r [requirements.txt]()
 
 ---
 
