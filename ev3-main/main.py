@@ -21,6 +21,25 @@ DRAW_SPEED = 500
 # Скорость перемещения (движение с поднятым пером и возврат домой)
 TRAVEL_SPEED = 500
 
+def load_config(filename='config.cfg'):
+    """Загружает конфигурацию из файла"""
+    global SCALE, DRAW_SPEED, TRAVEL_SPEED
+    
+    try:
+        with open(filename, 'r') as f:
+            for line in f:
+                line = line.strip()
+                if line.startswith('SCALE='):
+                    SCALE = float(line.split('=')[1])
+                elif line.startswith('DRAW_SPEED='):
+                    DRAW_SPEED = int(line.split('=')[1])
+                elif line.startswith('TRAVEL_SPEED='):
+                    TRAVEL_SPEED = int(line.split('=')[1])
+        return True
+    except:
+        # Если файл не найден или ошибка чтения - используем значения по умолчанию
+        return False
+
 # Конфигурация моторов
 motorA = Motor(Port.A)   # Левая нить
 motorB = Motor(Port.B)   # Правая нить
@@ -96,6 +115,17 @@ def sync_move(target_A, target_B, speed):
 # --- Подготовка к запуску ---
 ev3.screen.clear()
 ev3.speaker.beep()
+
+# Загрузка конфигурации
+if load_config('config.cfg'):
+    ev3.screen.print("Config loaded")
+    ev3.screen.print("SCALE:", SCALE)
+    wait(2000)
+else:
+    ev3.screen.print("Using defaults")
+    wait(2000)
+
+ev3.screen.clear()
 wait(1000)
 
 # Принимаем текущую позицию за нулевую точку отсчета
