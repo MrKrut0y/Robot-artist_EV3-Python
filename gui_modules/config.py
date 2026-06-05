@@ -15,15 +15,27 @@ TRAVEL_SPEED = 500
 PEN_UP_CODE = 1000
 
 
+def get_secure_path(filename):
+    """
+    Формирует абсолютный путь к файлу конфигурации внутри папки ev3-main.
+    """
+    # Выходим из gui_modules в корень проекта, затем заходим в ev3-main
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    target_dir = os.path.join(project_root, 'ev3-main')
+        
+    return os.path.join(target_dir, filename)
+
+
 def load_config(filename='config.cfg'):
     """
     Загружает конфигурацию из файла.
     Возвращает True при успешной загрузке, False при ошибке.
     """
     global SCALE, DRAW_SPEED, TRAVEL_SPEED
+    target_path = get_secure_path(filename)
     try:
-        if os.path.exists(filename):
-            with open(filename, 'r', encoding='utf-8') as f:
+        if os.path.exists(target_path):
+            with open(target_path, 'r', encoding='utf-8') as f:
                 for line in f:
                     line = line.strip()
                     if line.startswith('SCALE='):
@@ -48,9 +60,10 @@ def save_config(scale, draw_speed, travel_speed, filename='config.cfg'):
     SCALE = scale
     DRAW_SPEED = draw_speed
     TRAVEL_SPEED = travel_speed
+    target_path = get_secure_path(filename)
 
     try:
-        with open(filename, 'w', encoding='utf-8') as f:
+        with open(target_path, 'w', encoding='utf-8') as f:
             f.write(f"SCALE={SCALE}\n")
             f.write(f"DRAW_SPEED={DRAW_SPEED}\n")
             f.write(f"TRAVEL_SPEED={TRAVEL_SPEED}\n")
