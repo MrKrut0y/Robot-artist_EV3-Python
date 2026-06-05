@@ -4,12 +4,11 @@ from pybricks.ev3devices import Motor
 from pybricks.parameters import Port
 from pybricks.tools import wait
 import math
-import os
 
 ev3 = EV3Brick()
 
-# Определение рабочей директории проекта
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+# Жестко определяем рабочую папку проекта внутри робота без использования os.path
+REMOTE_DIR = '/home/robot/plotter/'
 
 # Настройки по умолчанию
 SCALE = 1.3
@@ -17,9 +16,9 @@ DRAW_SPEED = 500
 TRAVEL_SPEED = 500
 
 def load_config(filename='config.cfg'):
-    # Загрузка настроек из файла config.cfg
+    # Загрузка настроек из файла config.cfg (без os.path)
     global SCALE, DRAW_SPEED, TRAVEL_SPEED
-    config_path = os.path.join(BASE_DIR, filename)
+    config_path = REMOTE_DIR + filename
     
     try:
         with open(config_path, 'r') as f:
@@ -115,14 +114,14 @@ motorA.reset_angle(0)
 motorB.reset_angle(0)
 motorC.reset_angle(0)
 
-coords_path = os.path.join(BASE_DIR, 'pict_coord.rtf')
+coords_path = REMOTE_DIR + 'pict_coord.rtf'
 
 # --- Основной цикл рисования ---
 try:
     with open(coords_path, 'r') as f:
         header = f.readline()
         
-        # Получение количества точек из первой строки
+        # Получение количества точек из первой строки (MicroPython-совместимый вариант)
         digits = [char for char in header if char in '0123456789']
         try:
             points_count = int(''.join(digits))
