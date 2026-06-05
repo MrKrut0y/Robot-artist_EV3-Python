@@ -5,18 +5,31 @@
 """
 
 import os
+import sys
 from PyQt5.QtWidgets import (
     QMainWindow, QMessageBox, QFileDialog, QSizePolicy,
     QPushButton, QVBoxLayout, QDialog
 )
 from PyQt5.QtCore import Qt
 from ui_main import Ui_MainWindow
+
+# --- ДИНАМИЧЕСКИЙ ИМПОРТ ИЗ ПАПКИ ev3-main ДЛЯ PYLANCE ---
+# Находим корень проекта (на уровень выше gui_modules)
+PROJECT_ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+# Путь к папке со скриптами робота
+EV3_MAIN_PATH = os.path.join(PROJECT_ROOT, 'ev3-main')
+
+# Добавляем в пути поиска, чтобы среда разработки увидела remote_control.py
+if EV3_MAIN_PATH not in sys.path:
+    sys.path.insert(0, EV3_MAIN_PATH)
+
+from remote_control import execute_robot_deployment # type: ignore
+
 from .config import load_config, PEN_UP_CODE
 from .dialogs import SettingsDialog
 from .canvas_draw import DrawCanvas
 from .canvas_image import ImageCanvas
 from .canvas_contour import ContourExtractor, ImageDisplayWidget
-
 
 class MainWindow(QMainWindow, Ui_MainWindow):
     """Основной класс приложения."""
@@ -50,292 +63,180 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.canvas.set_mode("draw")
         self.redButton.setCheckable(True)
         self.redButton.setChecked(False)
-        self.first_time_edit = True
 
     def _setup_tab1(self):
-        """Инициализация первой вкладки (ручное рисование)."""
-        if self.canvasWidget.layout() is None:
-            self.canvasWidget.setLayout(QVBoxLayout())
-        self.canvas = DrawCanvas()
-        self.canvasWidget.layout().addWidget(self.canvas)
+        """Настройка первой вкладки (ручное рисование)."""
+        self.canvas = DrawCanvas(self.tab)
+        self.canvas.setObjectName("canvas")
+        self.horizontalLayout.addWidget(self.canvas)
+        self.canvas.points_changed.connect(self.update_points_info)
 
     def _setup_tab2(self):
-        """Инициализация второй вкладки (изображения)."""
-        if self.imageWidget.layout() is None:
-            self.imageWidget.setLayout(QVBoxLayout())
-        self.image_canvas = ImageCanvas()
-        self.imageWidget.layout().addWidget(self.image_canvas)
-        self.imageWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.image_canvas.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
-        self.image_canvas.setMinimumSize(400, 300)
+        """Настройка второй вкладки (контуры изображений)."""
+        self.image_canvas = ImageCanvas(self.tab_2)
+        self.horizontalLayout_2.addWidget(self.image_canvas)
 
     def _setup_tab3(self):
-        """Инициализация третьей вкладки (контурный экстрактор)."""
+        """Настройка третьей вкладки (экстрактор контуров)."""
         self.contour_extractor = ContourExtractor()
+        self.input_image_widget = ImageDisplayWidget(self.originalImageGroup)
+        self.output_image_widget = ImageDisplayWidget(self.processedImageGroup)
 
-        self.original_display = ImageDisplayWidget(self.originalImageWidget)
-        layout_orig = QVBoxLayout(self.originalImageWidget)
-        layout_orig.setContentsMargins(0, 0, 0, 0)
-        layout_orig.addWidget(self.original_display)
+        for i in range(self.gridLayout_3.count()):
+            item = self.gridLayout_3.itemAt(i)
+            if item and item.widget():
+                item.widget().hide()
 
-        self.processed_display = ImageDisplayWidget(self.processedImageWidget)
-        layout_proc = QVBoxLayout(self.processedImageWidget)
-        layout_proc.setContentsMargins(0, 0, 0, 0)
-        layout_proc.addWidget(self.processed_display)
+        self.gridLayout_3.addWidget(self.input_image_widget, 0, 0)
+        self.gridLayout_3.addWidget(self.output_image_widget, 0, 1)
 
     def _connect_signals(self):
-        """Подключение всех сигналов и слотов."""
-        # Кнопка "Настройки робота" (pushButton в ui_main.py)
-        if hasattr(self, 'pushButton'):
-            self.pushButton.clicked.connect(self.open_settings)
-
-        self.saveButton.clicked.connect(self.save_points)
-        self.clearButton.clicked.connect(self.clear_all_points)
-        self.redButton.clicked.connect(self.toggle_edit_mode)
-        self.newLineButton.clicked.connect(self.canvas.new_line)
-        self.deleteButton.clicked.connect(self.canvas.delete_last_point)
+        """Подключение обработчиков сигналов интерфейса."""
+        self.blueButton.clicked.connect(self.set_draw_mode)
+        self.redButton.clicked.connect(self.set_edit_mode)
+        self.clearButton.clicked.connect(self.clear_canvas)
+        self.saveButton.clicked.connect(self.save_draw_points)
+        self.settingsButton.clicked.connect(self.open_settings)
         self.helpButton.clicked.connect(self.show_help)
 
-        self.uploadButton.clicked.connect(self.load_image_with_message)
-        self.clearButton_3.clicked.connect(self.clear_image_canvas)
-        self.saveButton_3.clicked.connect(self.save_image_coords)
+        self.selectImageButton.clicked.connect(self.load_image_tab2)
+        self.clearImageButton.clicked.connect(self.clear_tab2)
+        self.saveResultButton_2.clicked.connect(self.save_image_contours)
         self.helpButton_2.clicked.connect(self.show_help)
-        self.epsilonSlider.valueChanged.connect(self.update_epsilon_label)
-        self.simplifyButton.clicked.connect(self.simplify_image_contours)
 
-        self.loadImageButton.clicked.connect(self.load_image_contour)
-        self.previewButton.clicked.connect(self.preview_processing)
-        self.saveResultButton.clicked.connect(self.save_result)
+        self.openImageButton.clicked.connect(self.load_image_tab3)
+        self.previewButton.clicked.connect(self.process_image_tab3)
+        self.saveResultButton.clicked.connect(self.save_processed_image)
         self.helpButton_3.clicked.connect(self.show_help)
-        self.threshold1Slider.valueChanged.connect(self.update_threshold1_label)
-        self.threshold2Slider.valueChanged.connect(self.update_threshold2_label)
-        self.thresholdValueSlider.valueChanged.connect(self.update_threshold_value_label)
-        self.blurSlider.valueChanged.connect(self.update_blur_label)
-        self.qualitySlider.valueChanged.connect(self.update_quality_label)
-        self.cannyRadio.toggled.connect(self.toggle_method)
-        self.thresholdRadio.toggled.connect(self.toggle_method)
-        self.blurCheckBox.toggled.connect(self.toggle_blur)
-        self.toggle_method()
-        self.update_blur_label(5)
+
+        self.blurCheckBox.toggled.connect(self.process_image_tab3)
+        self.methodComboBox.currentIndexChanged.connect(self.on_method_changed)
+        self.slider1.valueChanged.connect(self.process_image_tab3)
+        self.slider2.valueChanged.connect(self.process_image_tab3)
+
+        # Подключение обработчика для кнопки запуска на роботе EV3.
+        # Если в ui_main определена кнопка запуска, связываем ее.
+        if hasattr(self, 'runEV3Button'):
+            self.runEV3Button.clicked.connect(self.run_on_ev3)
+        elif hasattr(self, 'pushButton_run'):  # Пример альтернативного имени кнопки
+            self.pushButton_run.clicked.connect(self.run_on_ev3)
+        else:
+            # Если кнопки в UI нет, вы можете привязать ее к любому другому действию,
+            # либо она будет вызвана при сохранении
+            pass
+
+    def get_secure_app_path(self, filename):
+        """Формирует абсолютный путь к файлу внутри папки ev3-main."""
+        project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        target_dir = os.path.join(project_root, 'ev3-main')
+            
+        return os.path.join(target_dir, filename)
+
+    def set_draw_mode(self):
+        self.canvas.set_mode("draw")
+        self.redButton.setChecked(False)
+        self.blueButton.setChecked(True)
+
+    def set_edit_mode(self):
+        self.canvas.set_mode("edit")
+        self.blueButton.setChecked(False)
+        self.redButton.setChecked(True)
+
+    def clear_canvas(self):
+        self.canvas.clear()
+        self.update_points_info(0, 0)
+
+    def update_points_info(self, total_points, segments_count):
+        self.label.setText(f"Точек: {total_points} | Сегментов: {segments_count}")
 
     def open_settings(self):
-        """Открывает окно настроек робота."""
         dialog = SettingsDialog(self)
         dialog.exec_()
 
-    def update_epsilon_label(self, value):
-        epsilon = value / 1000.0
-        self.epsilonValueLabel.setText(f"{epsilon:.3f}")
-
-    def simplify_image_contours(self):
-        if not self.image_canvas.original_contours:
-            QMessageBox.warning(self, "Предупреждение",
-                "Нет контуров для упрощения! Сначала загрузите изображение и распознайте контуры.")
-            return
-
-        epsilon = self.epsilonSlider.value() / 1000.0
-        success, original, simplified = self.image_canvas.simplify_contours(epsilon)
-
-        if success:
-            if epsilon == 0:
-                QMessageBox.information(self, "Успех",
-                    f"Контуры восстановлены в исходное состояние!\nВсего точек: {original}")
-            else:
-                QMessageBox.information(self, "Успех",
-                    f"Контуры упрощены!\nБыло точек: {original}\nСтало точек: {simplified}\nСжатие: {int((1 - simplified/original)*100)}%")
-        else:
-            QMessageBox.warning(self, "Предупреждение", "Не удалось упростить контуры.")
-
-    def update_threshold1_label(self, value): self.threshold1ValueLabel.setText(str(value))
-    def update_threshold2_label(self, value): self.threshold2ValueLabel.setText(str(value))
-    def update_threshold_value_label(self, value): self.thresholdValueLabel.setText(str(value))
-
-    def update_blur_label(self, value):
-        size = value
-        if size % 2 == 0:
-            size += 1
-            self.blurSlider.setValue(size)
-        self.blurValueLabel.setText(str(size))
-
-    def update_quality_label(self, value): self.qualityValueLabel.setText(f"{value}%")
-
-    def toggle_method(self):
-        is_canny = self.cannyRadio.isChecked()
-        self.cannySettingsFrame.setVisible(is_canny)
-        self.thresholdSettingsFrame.setVisible(not is_canny)
-
-    def toggle_blur(self):
-        self.blurSlider.setEnabled(self.blurCheckBox.isChecked())
-
-    def load_image_contour(self):
-        file_path, _ = QFileDialog.getOpenFileName(
-            self, "Выберите изображение", "",
-            "Images (*.png *.jpg *.jpeg *.bmp *.tiff)"
-        )
-        if file_path:
-            success, result = self.contour_extractor.load_image(file_path)
-            if success:
-                self.imageInfoLabel.setText(
-                    f"Размер: {result['width']}×{result['height']} | Каналы: {result['channels']}"
-                )
-                self.originalImageInfo.setText(f"Размер: {result['width']}×{result['height']}")
-                self.original_display.set_image(self.contour_extractor.get_original_image())
-                QMessageBox.information(self, "Успех", f"Изображение загружено: {result['filename']}")
-            else:
-                QMessageBox.critical(self, "Ошибка", f"Не удалось загрузить изображение:\n{result}")
-                self.imageInfoLabel.setText("Ошибка загрузки")
-
-    def preview_processing(self):
-        method = 'canny' if self.cannyRadio.isChecked() else 'threshold'
-        success, result = self.contour_extractor.process_image(
-            method=method,
-            blur_enabled=self.blurCheckBox.isChecked(),
-            blur_size=self.blurSlider.value(),
-            threshold1=self.threshold1Slider.value(),
-            threshold2=self.threshold2Slider.value(),
-            threshold_value=self.thresholdValueSlider.value()
-        )
-
-        if success:
-            self.processed_display.set_image(result)
-            h, w = result.shape[:2] if len(result.shape) == 2 else result.shape[:2]
-            self.processedImageInfo.setText(f"Размер: {w}×{h}")
-        else:
-            QMessageBox.critical(self, "Ошибка", f"Ошибка при обработке:\n{result}")
-
-    def save_result(self):
-        if self.contour_extractor.get_processed_image() is None:
-            self.preview_processing()
-            if self.contour_extractor.get_processed_image() is None:
-                return
-
-        format_map = {"jpg": ".jpg", "png": ".png", "bmp": ".bmp", "tiff": ".tiff"}
-        selected_format = self.formatComboBox.currentText()
-        ext = format_map.get(selected_format, ".jpg")
-        default_name = "contours"
-
-        if self.contour_extractor.image_path:
-            base_name = os.path.splitext(os.path.basename(self.contour_extractor.image_path))[0]
-            default_name = f"{base_name}_contours"
-
-        filename, _ = QFileDialog.getSaveFileName(
-            self, "Сохранить результат", default_name,
-            f"{selected_format.upper()} (*{ext})"
-        )
-
-        if filename:
-            quality = self.qualitySlider.value()
-            success, message = self.contour_extractor.save_image(filename, quality)
-            if success:
-                QMessageBox.information(self, "Успех", "Результат успешно сохранен!")
-            else:
-                QMessageBox.critical(self, "Ошибка", f"Не удалось сохранить файл:\n{message}")
-
-    def load_image_with_message(self):
-        file_path, _ = QFileDialog.getOpenFileName(
-            self, "Выберите изображение", "",
-            "Images (*.png *.jpg *.jpeg *.bmp *.tiff)"
-        )
-        if file_path:
-            if self.image_canvas.load_image(file_path):
-                QMessageBox.information(self, "Успех", f"Изображение загружено: {os.path.basename(file_path)}")
-                if self.image_canvas.detect_contours():
-                    QMessageBox.information(self, "Успех", f"Распознано контуров: {len(self.image_canvas.contours)}")
-                else:
-                    QMessageBox.warning(self, "Предупреждение", "Не удалось распознать контуры")
-            else:
-                QMessageBox.critical(self, "Ошибка", "Ошибка загрузки изображения")
-
-    def clear_image_canvas(self):
-        reply = QMessageBox.question(
-            self, 'Подтверждение', 'Очистить изображение и контуры?',
-            QMessageBox.Yes | QMessageBox.No, QMessageBox.No
-        )
-        if reply == QMessageBox.Yes:
-            self.image_canvas.clear()
-            QMessageBox.information(self, "Успех", "Изображение и контуры очищены")
-
-    def clear_all_points(self):
-        reply = QMessageBox.question(
-            self, 'Подтверждение', 'Удалить все точки?',
-            QMessageBox.Yes | QMessageBox.No, QMessageBox.No
-        )
-        if reply == QMessageBox.Yes:
-            self.canvas.clear_all()
-
-    def toggle_edit_mode(self):
-        if self.redButton.isChecked():
-            self.canvas.set_mode("edit")
-            if self.first_time_edit:
-                QMessageBox.information(
-                    self, "Режим редактирования",
-                    "Режим редактирования: перетаскивайте точки, правая кнопка - удалить"
-                )
-                self.first_time_edit = False
-        else:
-            self.canvas.set_mode("draw")
-
-    def save_to_file(self, data, total_points):
-        """Сохраняет координаты в файл pict_coord.rtf."""
+    def save_to_file(self, data, count, filename='pict_coord.rtf'):
+        """Внутренний метод записи массива координат в файл на ПК."""
+        target_path = self.get_secure_app_path(filename)
         try:
-            filename = "pict_coord.rtf"
-            with open(filename, "w", encoding='utf-8', newline='\r\n') as f:
-                f.write(f"{total_points}\n")
+            with open(target_path, 'w', encoding='utf-8') as f:
+                f.write(f"{count}\n")
                 for i in range(0, len(data), 2):
                     f.write(f"{data[i]}\n")
                     f.write(f"{data[i+1]}\n")
             return True
         except Exception as e:
-            QMessageBox.critical(self, "Ошибка", f"Ошибка сохранения: {e}")
+            QMessageBox.critical(self, "Ошибка файловой системы", f"Не удалось записать файл {filename}: {e}")
             return False
 
-    def save_points(self):
-        """Сохраняет точки с первой вкладки."""
+    def save_draw_points(self):
+        """Сохранение траекторий ручного рисования (Вкладка 1)."""
         if not self.canvas.points:
-            QMessageBox.warning(self, "Предупреждение", "Нет точек для сохранения!")
-            return
-
-        robot_data = []
-        segment_indices = sorted(self.canvas.segments)
-        current_idx = 0
-        all_indices = segment_indices + [len(self.canvas.points)]
-
-        for seg_end in all_indices:
-            if current_idx < seg_end:
-                first_point = self.canvas.points[current_idx]
-                robot_data.append(int(round(first_point.x)) + PEN_UP_CODE)
-                robot_data.append(int(round(first_point.y)))
-                for i in range(current_idx + 1, seg_end):
-                    point = self.canvas.points[i]
-                    robot_data.append(int(round(point.x)))
-                    robot_data.append(int(round(point.y)))
-                current_idx = seg_end
-
-        if self.save_to_file(robot_data, len(self.canvas.points)):
-            QMessageBox.information(
-                self, "Успех",
-                f"Точки успешно сохранены в pict_coord.rtf!\nВсего точек: {len(self.canvas.points)}"
-            )
-
-    def save_image_coords(self):
-        """Сохраняет контуры со второй вкладки."""
-        if not self.image_canvas.contours:
-            QMessageBox.warning(self, "Предупреждение", "Нет контуров для сохранения!")
+            QMessageBox.warning(self, "Предупреждение", "Холст пуст! Нет данных для сохранения.")
             return
 
         try:
             robot_data = []
             total_points = 0
+            start_idx = 0
+
+            for seg_idx in self.canvas.segments:
+                if seg_idx > start_idx:
+                    for i in range(start_idx, seg_idx):
+                        pt = self.canvas.points[i]
+                        x_val = int(round(pt.x)) + PEN_UP_CODE if i == start_idx else int(round(pt.x))
+                        robot_data.append(x_val)
+                        robot_data.append(int(round(pt.y)))
+                        total_points += 1
+                start_idx = seg_idx
+
+            if start_idx < len(self.canvas.points):
+                for i in range(start_idx, len(self.canvas.points)):
+                    pt = self.canvas.points[i]
+                    x_val = int(round(pt.x)) + PEN_UP_CODE if i == start_idx else int(round(pt.x))
+                    robot_data.append(x_val)
+                    robot_data.append(int(round(pt.y)))
+                    total_points += 1
+
+            if self.save_to_file(robot_data, total_points):
+                QMessageBox.information(
+                    self, "Успех",
+                    f"Координаты сохранены в файл pict_coord.rtf!\nВсего точек: {total_points}"
+                )
+        except Exception as e:
+            QMessageBox.critical(self, "Ошибка", f"Ошибка конвертации координат: {e}")
+
+    def load_image_tab2(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "Открыть изображение", "",
+            "Изображения (*.png *.jpg *.jpeg *.bmp)"
+        )
+        if file_path:
+            success, msg = self.image_canvas.load_image(file_path)
+            if success:
+                self.label_8.setText(f"Размер: {msg['width']}x{msg['height']}")
+                self.horizontalSlider.setValue(50)
+            else:
+                QMessageBox.critical(self, "Ошибка", f"Не удалось загрузить изображение: {msg}")
+
+    def clear_tab2(self):
+        self.image_canvas.clear()
+        self.label_8.setText("Размер: -")
+
+    def save_image_contours(self):
+        """Сохранение траекторий автоматических контуров (Вкладка 2)."""
+        if not self.image_canvas.contours:
+            QMessageBox.warning(self, "Предупреждение", "Контуры отсутствуют!")
+            return
+
+        try:
+            robot_data = []
+            total_points = 0
+
             for contour in self.image_canvas.contours:
-                if len(contour) < 2:
+                if not contour:
                     continue
-                first_point = contour[0]
-                robot_data.append(int(round(first_point.x)) + PEN_UP_CODE)
-                robot_data.append(int(round(first_point.y)))
-                total_points += 1
-                for i in range(1, len(contour)):
-                    point = contour[i]
-                    robot_data.append(int(round(point.x)))
+                for i, point in enumerate(contour):
+                    x_val = int(round(point.x)) + PEN_UP_CODE if i == 0 else int(round(point.x))
+                    robot_data.append(x_val)
                     robot_data.append(int(round(point.y)))
                     total_points += 1
 
@@ -346,6 +247,84 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 )
         except Exception as e:
             QMessageBox.critical(self, "Ошибка", f"Ошибка сохранения: {e}")
+
+    def load_image_tab3(self):
+        file_path, _ = QFileDialog.getOpenFileName(
+            self, "Открыть изображение", "",
+            "Изображения (*.png *.jpg *.jpeg *.bmp)"
+        )
+        if file_path:
+            success, info = self.contour_extractor.load_image(file_path)
+            if success:
+                self.originalImageInfo.setText(f"Размер: {info['width']}x{info['height']}")
+                self.input_image_widget.set_image(self.contour_extractor.original_image)
+                self.process_image_tab3()
+            else:
+                QMessageBox.critical(self, "Ошибка", f"Не удалось загрузить: {info}")
+
+    def on_method_changed(self, index):
+        if index == 0:
+            self.labelSlider1.setText("Порог 1:")
+            self.labelSlider2.setText("Порог 2:")
+            self.slider1.setRange(0, 255)
+            self.slider2.setRange(0, 255)
+            self.slider1.setValue(50)
+            self.slider2.setValue(150)
+        else:
+            self.labelSlider1.setText("Значение порога:")
+            self.labelSlider2.setText("Не используется:")
+            self.slider1.setRange(0, 255)
+            self.slider1.setValue(127)
+
+        self.process_image_tab3()
+
+    def process_image_tab3(self):
+        if self.contour_extractor.original_image is None:
+            return
+
+        method = 'canny' if self.methodComboBox.currentIndex() == 0 else 'threshold'
+        blur = self.blurCheckBox.isChecked()
+        val1 = self.slider1.value()
+        val2 = self.slider2.value()
+
+        success, msg = self.contour_extractor.process_image(
+            method=method, blur_enabled=blur, blur_size=5,
+            threshold1=val1, threshold2=val2, threshold_value=val1
+        )
+
+        if success:
+            self.output_image_widget.set_image(self.contour_extractor.processed_image)
+            h, w = self.contour_extractor.processed_image.shape[:2]
+            self.processedImageInfo.setText(f"Размер: {w}x{h}")
+        else:
+            print(f"Ошибка обработки: {msg}")
+
+    def save_processed_image(self):
+        if self.contour_extractor.processed_image is None:
+            QMessageBox.warning(self, "Предупреждение", "Нет обработанного изображения для сохранения!")
+            return
+
+        file_path, _ = QFileDialog.getSaveFileName(
+            self, "Сохранить изображение", "result.jpg",
+            "Изображения (*.jpg *.png *.bmp)"
+        )
+        if file_path:
+            try:
+                import cv2
+                cv2.imwrite(file_path, self.contour_extractor.processed_image)
+                QMessageBox.information(self, "Успех", "Изображение успешно сохранено на ПК.")
+            except Exception as e:
+                QMessageBox.critical(self, "Ошибка", f"Не удалось сохранить файл: {e}")
+
+    def run_on_ev3(self):
+        """Слот обработки нажатия кнопки запуска на роботе EV3."""
+        # Вызываем функцию развертывания и принудительной перезаписи файлов на роботе
+        success, result_message = execute_robot_deployment()
+        
+        if success:
+            QMessageBox.information(self, "Успех развертывания проекта", result_message)
+        else:
+            QMessageBox.critical(self, "Ошибка удаленного управления", result_message)
 
     def show_help(self):
         help_text = """
@@ -361,4 +340,4 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         <p>Сохранение координат происходит в файл pict_coord.rtf для последующей передачи на контроллер EV3.</p>
         <p><i>© 2026 Робот-художник</i></p>
         """
-        QMessageBox.about(self, "О программе", help_text)
+        QMessageBox.information(self, "Справка", help_text)
