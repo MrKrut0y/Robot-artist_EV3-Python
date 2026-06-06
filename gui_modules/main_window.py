@@ -5,17 +5,29 @@
 """
 
 import os
+import sys
 from PyQt5.QtWidgets import (
     QMainWindow, QMessageBox, QFileDialog, QSizePolicy,
     QPushButton, QVBoxLayout, QDialog
 )
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QThread, pyqtSignal
 from ui_main import Ui_MainWindow
 from .config import PEN_UP_CODE
 from .dialogs import SettingsDialog
 from .canvas_draw import DrawCanvas
 from .canvas_image import ImageCanvas
 from .canvas_contour import ContourExtractor, ImageDisplayWidget
+
+sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ev3-main'))
+from remote_control import execute_robot_deployment
+
+
+class DeployWorker(QThread):
+    finished = pyqtSignal(bool, str)
+
+    def run(self):
+        success, log = execute_robot_deployment()
+        self.finished.emit(success, log)
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -116,10 +128,27 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.toggle_method()
         self.update_blur_label(5)
 
+        self.startEv3Button.clicked.connect(self.start_ev3)
+
     def open_settings(self):
         """Открывает окно настроек робота."""
         dialog = SettingsDialog(self)
         dialog.exec_()
+
+    def start_ev3(self):
+        self.startEv3Button.setEnabled(False)
+        self.startEv3Button.setText("Выполняется...")
+        self.worker = DeployWorker()
+        self.worker.finished.connect(self.on_deploy_finished)
+        self.worker.start()
+
+    def on_deploy_finished(self, success, log):
+        self.startEv3Button.setEnabled(True)
+        self.startEv3Button.setText("Запустить на EV3")
+        if success:
+            QMessageBox.information(self, "Результат", log)
+        else:
+            QMessageBox.critical(self, "Ошибка", log)
 
     def update_epsilon_label(self, value):
         epsilon = value / 1000.0
