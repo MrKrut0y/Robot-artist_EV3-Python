@@ -305,7 +305,8 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def save_to_file(self, data, total_points):
         """Сохраняет координаты в файл pict_coord.rtf."""
         try:
-            filename = "pict_coord.rtf"
+            ev3_dir = os.path.join(os.path.dirname(__file__), '..', 'ev3-main')
+            filename = os.path.join(ev3_dir, "pict_coord.rtf")
             with open(filename, "w", encoding='utf-8', newline='\r\n') as f:
                 f.write(f"{total_points}\n")
                 for i in range(0, len(data), 2):

@@ -47,7 +47,9 @@ def save_config(scale, draw_speed, travel_speed, filename='config.cfg'):
     TRAVEL_SPEED = travel_speed
 
     try:
-        with open(filename, 'w', encoding='utf-8') as f:
+        ev3_dir = os.path.join(os.path.dirname(__file__), '..', 'ev3-main')
+        filepath = os.path.join(ev3_dir, filename)
+        with open(filepath, 'w', encoding='utf-8') as f:
             f.write(f"SCALE={SCALE}\n")
             f.write(f"DRAW_SPEED={DRAW_SPEED}\n")
             f.write(f"TRAVEL_SPEED={TRAVEL_SPEED}\n")
