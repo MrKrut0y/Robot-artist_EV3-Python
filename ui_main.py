@@ -96,6 +96,13 @@ class Ui_MainWindow(object):
         self.startEv3Button.setFont(font)
         self.startEv3Button.setObjectName("startEv3Button")
         self.verticalLayout.addWidget(self.startEv3Button)
+        self.stopEv3Button = QtWidgets.QPushButton(self.groupBox)
+        self.stopEv3Button.setMaximumSize(QtCore.QSize(175, 30))
+        font = QtGui.QFont()
+        font.setPointSize(10)
+        self.stopEv3Button.setFont(font)
+        self.stopEv3Button.setObjectName("stopEv3Button")
+        self.verticalLayout.addWidget(self.stopEv3Button)
         spacerItem1 = QtWidgets.QSpacerItem(20, 10, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout.addItem(spacerItem1)
         self.horizontalLayout_3 = QtWidgets.QHBoxLayout()
@@ -577,7 +584,7 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
 
         self.retranslateUi(MainWindow)
-        self.tabWidget.setCurrentIndex(2)
+        self.tabWidget.setCurrentIndex(0)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
@@ -593,6 +600,7 @@ class Ui_MainWindow(object):
         self.saveButton.setText(_translate("MainWindow", "Сохранить координаты"))
         self.settingsButton.setText(_translate("MainWindow", "Настройки робота"))
         self.startEv3Button.setText(_translate("MainWindow", "Запустить на EV3"))
+        self.stopEv3Button.setText(_translate("MainWindow", "СТОП"))
         self.helpButton.setText(_translate("MainWindow", "?"))
         self.groupBox_2.setTitle(_translate("MainWindow", "Холст робота (X: -240..240, Y: -180..180)"))
         self.tabWidget.setTabText(self.tabWidget.indexOf(self.tab), _translate("MainWindow", "Рисование точек"))

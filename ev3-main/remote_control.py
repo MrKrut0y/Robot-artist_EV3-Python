@@ -58,7 +58,8 @@ def execute_robot_deployment():
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
     
-    log_messages = ["Установка беспроводного соединения с EV3..."]
+    #log_messages = ["Установка беспроводного соединения с EV3..."]
+    log_messages = [""]
     
     try:
         ssh.connect(HOSTNAME, username=USERNAME, password=PASSWORD, timeout=10)
@@ -68,17 +69,17 @@ def execute_robot_deployment():
         
         sftp = ssh.open_sftp()
         
-        log_messages.append(f"Синхронизация программы: {LOCAL_MAIN}")
+        #log_messages.append(f"Синхронизация программы: {LOCAL_MAIN}")
         sftp.put(local_main_path, REMOTE_SCRIPT_PATH)
         sftp.chmod(REMOTE_SCRIPT_PATH, 0o755)
         
         remote_coords_dest = f'{REMOTE_DIR}/{LOCAL_COORDS}'
-        log_messages.append(f"Синхронизация координат холста: {LOCAL_COORDS}")
+        #log_messages.append(f"Синхронизация координат холста: {LOCAL_COORDS}")
         sftp.put(local_coords_path, remote_coords_dest)
         
         if os.path.exists(local_config_path):
             remote_config_dest = f'{REMOTE_DIR}/{LOCAL_CONFIG}'
-            log_messages.append(f"Синхронизация файла конфигурации: {LOCAL_CONFIG}")
+            #log_messages.append(f"Синхронизация файла конфигурации: {LOCAL_CONFIG}")
             sftp.put(local_config_path, remote_config_dest)
         else:
             log_messages.append("Файл настроек отсутствует. Будут применены параметры по умолчанию.")
@@ -88,7 +89,7 @@ def execute_robot_deployment():
         
         ssh.exec_command(f'chmod +x {REMOTE_SCRIPT_PATH}')
         
-        log_messages.append("Отправка команды на автономный запуск рисования...")
+        #log_messages.append("Отправка команды на автономный запуск рисования...")
         run_command = f"bash -c 'nohup brickrun -r -- pybricks-micropython {REMOTE_SCRIPT_PATH} > /dev/null 2>&1 & disown'"
         
         chan = ssh.invoke_shell()

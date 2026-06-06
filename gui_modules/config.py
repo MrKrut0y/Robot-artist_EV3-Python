@@ -15,26 +15,6 @@ TRAVEL_SPEED = 800
 PEN_UP_CODE = 1000
 
 
-"""def load_config(filename='config.cfg'):
-
-    global SCALE, DRAW_SPEED, TRAVEL_SPEED
-    try:
-        if os.path.exists(filename):
-            with open(filename, 'r', encoding='utf-8') as f:
-                for line in f:
-                    line = line.strip()
-                    if line.startswith('SCALE='):
-                        SCALE = float(line.split('=')[1])
-                    elif line.startswith('DRAW_SPEED='):
-                        DRAW_SPEED = int(line.split('=')[1])
-                    elif line.startswith('TRAVEL_SPEED='):
-                        TRAVEL_SPEED = int(line.split('=')[1])
-            return True
-    except Exception as e:
-        print(f"Ошибка чтения config.cfg: {e}")
-    return False"""
-
-
 def save_config(scale, draw_speed, travel_speed, filename='config.cfg'):
     """
     Сохраняет конфигурацию в файл.
