@@ -19,7 +19,7 @@ from .canvas_image import ImageCanvas
 from .canvas_contour import ContourExtractor, ImageDisplayWidget
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ev3-main'))
-from remote_control import execute_robot_deployment
+from remote_control import execute_robot_deployment, stop_robot
 
 
 class DeployWorker(QThread):
@@ -27,6 +27,14 @@ class DeployWorker(QThread):
 
     def run(self):
         success, log = execute_robot_deployment()
+        self.finished.emit(success, log)
+
+
+class StopWorker(QThread):
+    finished = pyqtSignal(bool, str)
+
+    def run(self):
+        success, log = stop_robot()
         self.finished.emit(success, log)
 
 
@@ -61,6 +69,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.redButton.setCheckable(True)
         self.redButton.setChecked(False)
         self.first_time_edit = True
+        self.stopEv3Button.setEnabled(False)
 
     def _setup_tab1(self):
         """Инициализация первой вкладки (ручное рисование)."""
@@ -129,6 +138,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.update_blur_label(5)
 
         self.startEv3Button.clicked.connect(self.start_ev3)
+        self.stopEv3Button.clicked.connect(self.stop_ev3)
 
     def open_settings(self):
         """Открывает окно настроек робота."""
@@ -146,7 +156,24 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.startEv3Button.setEnabled(True)
         self.startEv3Button.setText("Запустить на EV3")
         if success:
+            self.stopEv3Button.setEnabled(True)
             QMessageBox.information(self, "Результат", log)
+        else:
+            QMessageBox.critical(self, "Ошибка", log)
+
+    def stop_ev3(self):
+        self.stopEv3Button.setEnabled(False)
+        self.stopEv3Button.setText("Остановка...")
+        self.stop_worker = StopWorker()
+        self.stop_worker.finished.connect(self.on_stop_finished)
+        self.stop_worker.start()
+
+    def on_stop_finished(self, success, log):
+        self.stopEv3Button.setText("СТОП")
+        self.stopEv3Button.setEnabled(False)
+        self.startEv3Button.setEnabled(True)
+        if success:
+            QMessageBox.information(self, "Остановка", log)
         else:
             QMessageBox.critical(self, "Ошибка", log)
 

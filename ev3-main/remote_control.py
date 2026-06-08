@@ -57,9 +57,8 @@ def execute_robot_deployment():
 
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-    
-    #log_messages = ["Установка беспроводного соединения с EV3..."]
-    log_messages = [""]
+
+    log_messages = []
     
     try:
         ssh.connect(HOSTNAME, username=USERNAME, password=PASSWORD, timeout=10)
@@ -68,18 +67,15 @@ def execute_robot_deployment():
         ssh.exec_command(f'mkdir -p {REMOTE_DIR}')
         
         sftp = ssh.open_sftp()
-        
-        #log_messages.append(f"Синхронизация программы: {LOCAL_MAIN}")
+
         sftp.put(local_main_path, REMOTE_SCRIPT_PATH)
         sftp.chmod(REMOTE_SCRIPT_PATH, 0o755)
         
         remote_coords_dest = f'{REMOTE_DIR}/{LOCAL_COORDS}'
-        #log_messages.append(f"Синхронизация координат холста: {LOCAL_COORDS}")
         sftp.put(local_coords_path, remote_coords_dest)
         
         if os.path.exists(local_config_path):
             remote_config_dest = f'{REMOTE_DIR}/{LOCAL_CONFIG}'
-            #log_messages.append(f"Синхронизация файла конфигурации: {LOCAL_CONFIG}")
             sftp.put(local_config_path, remote_config_dest)
         else:
             log_messages.append("Файл настроек отсутствует. Будут применены параметры по умолчанию.")
@@ -89,7 +85,6 @@ def execute_robot_deployment():
         
         ssh.exec_command(f'chmod +x {REMOTE_SCRIPT_PATH}')
         
-        #log_messages.append("Отправка команды на автономный запуск рисования...")
         run_command = f"bash -c 'nohup brickrun -r -- pybricks-micropython {REMOTE_SCRIPT_PATH} > /dev/null 2>&1 & disown'"
         
         chan = ssh.invoke_shell()
@@ -104,3 +99,29 @@ def execute_robot_deployment():
         return False, f"Произошла критическая ошибка сетевого взаимодействия:\n{str(error)}"
     finally:
         ssh.close()
+
+
+def stop_robot():
+    """Останавливает текущий процесс рисования на EV3."""
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    log = []
+
+    try:
+        ssh.connect(HOSTNAME, username=USERNAME, password=PASSWORD, timeout=10)
+        log.append("Подключение установлено.")
+
+        stdin, stdout, stderr = ssh.exec_command("pkill -f pybricks-micropython")
+        exit_status = stdout.channel.recv_exit_status()
+        if exit_status == 0:
+            log.append("Процесс рисования остановлен.")
+        else:
+            log.append("Процесс не найден (возможно, уже завершён).")
+
+        return True, "\n".join(log)
+
+    except Exception as e:
+        return False, f"Ошибка остановки: {e}"
+    finally:
+        ssh.close()
+
