@@ -68,9 +68,11 @@ pip install -r requirements.txt
 ### 1. Подготовка контроллера EV3
 
 1.  [Инструкция по сборке робота](https://github.com/MrKrut0y/Robot-artist_EV3-Python/tree/main/dop/Инструкция%20по%20сборке%20робота)
-2.  Скачайте прошивку [**Pybricks MicroPython**](https://education.lego.com/en-us/product-resources/mindstorms-ev3/teacher-resources/python-for-ev3/)
+2.  Скачайте прошивку [**ev3dev**](https://www.ev3dev.org/) (рекомендуется) или [**Pybricks MicroPython**](https://education.lego.com/en-us/product-resources/mindstorms-ev3/teacher-resources/python-for-ev3/) (альтернативная прошивка)
 3.  Запишите образ на microSD карту (например, через [Etcher](https://etcher.balena.io/))
 4.  Вставьте карту в выключенный EV3 и включите его. Дождитесь загрузки
+
+> **Примечание:** Данный проект разработан для прошивки **ev3dev** и протестирован на **Pybricks MicroPython**. Код совместим с обеими прошивками.
 
 ### 2. Запуск GUI на ПК
 
@@ -193,6 +195,7 @@ TRAVEL_SPEED=500
 *   [Пересчет координат](https://github.com/MrKrut0y/Robot-artist_EV3-Python/blob/main/dop/Пересчет%20координат.pdf)
 *   [Руководство по MicroPython для EV3](https://github.com/MrKrut0y/Robot-artist_EV3-Python/blob/main/dop/getting-started-with-micropython-v2_enus.pdf)
 *   [Pybricks MicroPython](https://education.lego.com/en-us/product-resources/mindstorms-ev3/teacher-resources/python-for-ev3/)
+*   [ev3dev — альтернативная прошивка для EV3](https://www.ev3dev.org/)
 *   [Расширение для VS Code](https://marketplace.visualstudio.com/items?itemName=lego-education.ev3-micropython)
 
 ---
