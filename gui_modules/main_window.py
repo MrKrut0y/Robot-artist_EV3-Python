@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-Модуль главного окна приложения.
-Объединяет все вкладки и управляет логикой взаимодействия.
+Главное окно приложения.
+Связывает три вкладки: ручное рисование, фото в координаты, контурный экстрактор.
+Управляет запуском и остановкой робота через SSH.
 """
 
 import os
@@ -19,10 +20,11 @@ from .canvas_image import ImageCanvas
 from .canvas_contour import ContourExtractor, ImageDisplayWidget
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ev3-main'))
-from remote_control import execute_robot_deployment, stop_robot
+from remote_control import execute_robot_deployment, stop_robot # type: ignore
 
 
 class DeployWorker(QThread):
+    """Фоновый поток для загрузки файлов и запуска робота на EV3."""
     finished = pyqtSignal(bool, str)
 
     def run(self):
@@ -31,6 +33,7 @@ class DeployWorker(QThread):
 
 
 class StopWorker(QThread):
+    """Фоновый поток для остановки процесса рисования на EV3."""
     finished = pyqtSignal(bool, str)
 
     def run(self):
@@ -148,6 +151,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         dialog.exec_()
 
     def start_ev3(self):
+        """Запускает робота: передаёт файлы на EV3 и стартует скрипт."""
         self.startEv3Button.setEnabled(False)
         self.startEv3Button.setText("Выполняется...")
         self.worker = DeployWorker()
@@ -155,6 +159,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.worker.start()
 
     def on_deploy_finished(self, success, log):
+        """Обрабатывает результат запуска робота."""
         self.startEv3Button.setEnabled(True)
         self.startEv3Button.setText("Запустить на EV3")
         if success:
@@ -164,6 +169,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.critical(self, "Ошибка", log)
 
     def stop_ev3(self):
+        """Останавливает робота через SSH."""
         self.stopEv3Button.setEnabled(False)
         self.stopEv3Button.setText("Остановка...")
         self.stop_worker = StopWorker()
@@ -171,6 +177,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.stop_worker.start()
 
     def on_stop_finished(self, success, log):
+        """Обрабатывает результат остановки робота."""
         self.stopEv3Button.setText("СТОП")
         self.stopEv3Button.setEnabled(False)
         self.startEv3Button.setEnabled(True)
@@ -180,10 +187,12 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.critical(self, "Ошибка", log)
 
     def update_epsilon_label(self, value):
+        """Обновляет отображаемое значение epsilon для упрощения контуров."""
         epsilon = value / 1000.0
         self.epsilonValueLabel.setText(f"{epsilon:.3f}")
 
     def simplify_image_contours(self):
+        """Упрощает контуры второго методом Ramer-Douglas-Peucker."""
         if not self.image_canvas.original_contours:
             QMessageBox.warning(self, "Предупреждение",
                 "Нет контуров для упрощения! Сначала загрузите изображение и распознайте контуры.")
@@ -203,26 +212,34 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.warning(self, "Предупреждение", "Не удалось упростить контуры.")
 
 
-    def update_threshold_value_label(self, value): self.thresholdValueLabel.setText(str(value))
+    def update_threshold_value_label(self, value):
+        """Обновляет отображаемое значение порога для пороговой обработки."""
+        self.thresholdValueLabel.setText(str(value))
 
     def update_blur_label(self, value):
+        """Обновляет отображаемый размер ядра размытия (всегда нечётное)."""
         size = value
         if size % 2 == 0:
             size += 1
             self.blurSlider.setValue(size)
         self.blurValueLabel.setText(str(size))
 
-    def update_quality_label(self, value): self.qualityValueLabel.setText(f"{value}%")
+    def update_quality_label(self, value):
+        """Обновляет отображаемое качество сохранения в процентах."""
+        self.qualityValueLabel.setText(f"{value}%")
 
     def toggle_method(self):
+        """Переключает видимость настроек между Canny и пороговой обработкой."""
         is_canny = self.cannyRadio.isChecked()
         self.cannySettingsFrame.setVisible(is_canny)
         self.thresholdSettingsFrame.setVisible(not is_canny)
 
     def toggle_blur(self):
+        """Включает/выключает слайдер размытия в зависимости от чекбокса."""
         self.blurSlider.setEnabled(self.blurCheckBox.isChecked())
 
     def load_image_contour(self):
+        """Загружает изображение для контурного экстрактора (вкладка 3)."""
         file_path, _ = QFileDialog.getOpenFileName(
             self, "Выберите изображение", "",
             "Images (*.png *.jpg *.jpeg *.bmp *.tiff)"
@@ -241,6 +258,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 self.imageInfoLabel.setText("Ошибка загрузки")
 
     def preview_processing(self):
+        """Запускает обработку изображения и отображает результат."""
         method = 'canny' if self.cannyRadio.isChecked() else 'threshold'
         success, result = self.contour_extractor.process_image(
             method=method,
@@ -259,6 +277,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.critical(self, "Ошибка", f"Ошибка при обработке:\n{result}")
 
     def save_result(self):
+        """Сохраняет обработанное изображение (контурный экстрактор) в файл."""
         if self.contour_extractor.get_processed_image() is None:
             self.preview_processing()
             if self.contour_extractor.get_processed_image() is None:
@@ -287,6 +306,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 QMessageBox.critical(self, "Ошибка", f"Не удалось сохранить файл:\n{message}")
 
     def load_image_with_message(self):
+        """Загружает изображение на вторую вкладку и распознаёт контуры."""
         file_path, _ = QFileDialog.getOpenFileName(
             self, "Выберите изображение", "",
             "Images (*.png *.jpg *.jpeg *.bmp *.tiff)"
@@ -302,6 +322,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
                 QMessageBox.critical(self, "Ошибка", "Ошибка загрузки изображения")
 
     def clear_image_canvas(self):
+        """Очищает изображение и контуры на второй вкладке."""
         reply = QMessageBox.question(
             self, 'Подтверждение', 'Очистить изображение и контуры?',
             QMessageBox.Yes | QMessageBox.No, QMessageBox.No
@@ -311,6 +332,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.information(self, "Успех", "Изображение и контуры очищены")
 
     def clear_all_points(self):
+        """Очищает все точки на первой вкладке."""
         reply = QMessageBox.question(
             self, 'Подтверждение', 'Удалить все точки?',
             QMessageBox.Yes | QMessageBox.No, QMessageBox.No
@@ -319,6 +341,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.canvas.clear_all()
 
     def toggle_edit_mode(self):
+        """Переключает режим рисования и редактирования точек."""
         if self.redButton.isChecked():
             self.canvas.set_mode("edit")
             if self.first_time_edit:
@@ -404,17 +427,18 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             QMessageBox.critical(self, "Ошибка", f"Ошибка сохранения: {e}")
 
     def show_help(self):
+        """Открывает окно справки с описанием программы."""
         help_text = """
         <h2>Программа для управления роботом-художником</h2>
         <h3>Описание программы:</h3>
         <p>Программа позволяет создавать траектории движения для робота-художника путем рисования точек на координатной сетке или преобразования изображений в координаты.</p>
         <h3>Основные функции:</h3>
         <ul>
-            <li><b>Вкладка 1:</b> Ручное рисование точек и сегментов, редактирование и перемещение существующих точек.</li>
+            <li><b>Вкладка 1:</b> Ручное рисование точек и сегментов, редактирование и перемещение существующих точек. Настройки робота. Удаленный запуск робота по bluetooth</li>
             <li><b>Вкладка 2:</b> Загрузка изображений и автоматическое распознавание контуров с их последующим упрощением.</li>
             <li><b>Вкладка 3:</b> Контурный экстрактор - выделение контуров на изображениях с помощью алгоритмов Канни или пороговой обработки.</li>
         </ul>
-        <p>Сохранение координат происходит в файл pict_coord.rtf для последующей передачи на контроллер EV3.</p>
+        <p>Сохранение координат происходит в файл pict_coord.rtf, параметров - скорости и масштаба рисунка в файл config.cfg для последующей передачи на контроллер EV3.</p>
         <p><i>© 2026 Робот-художник</i></p>
         """
         QMessageBox.about(self, "О программе", help_text)

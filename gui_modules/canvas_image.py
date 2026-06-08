@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Модуль холста для работы с изображениями (вкладка 2).
-Загружает изображения и распознает контуры.
+Холст для второй вкладки — загрузка изображений и распознавание контуров.
+Контуры автоматически преобразуются в координаты робота (-240..240, -180..180).
 """
 
 import cv2
@@ -24,12 +24,12 @@ class ImageCanvas(QWidget):
         self.setMouseTracking(True)
         self.setMinimumSize(200, 150)
 
-        self.contours: List[List[Point]] = []
-        self.original_contours: List[List[Point]] = []
-        self.original_image = None
-        self.display_pixmap = None
+        self.contours: List[List[Point]] = []  # текущие контуры (после упрощения)
+        self.original_contours: List[List[Point]] = []  # исходные контуры до упрощения
+        self.original_image = None  # загруженное изображение (OpenCV BGR)
+        self.display_pixmap = None  # QPixmap для отображения на холсте
         self.image_path = None
-        self.scale = 1.0
+        self.scale = 1.0  # масштаб подгонки изображения под область робота
         self.offset_x = 0
         self.offset_y = 0
 
@@ -62,6 +62,7 @@ class ImageCanvas(QWidget):
             return False
 
     def detect_contours(self):
+        """Находит контуры на изображении через инверсию + порог и simplifypolygon."""
         """Распознает контуры на загруженном изображении."""
         if self.original_image is None:
             return False

@@ -1,23 +1,18 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Программа для управления роботом-художником EV3.
+Точка входа GUI-приложения робота-художника.
 
-Основные возможности:
-1. Ручное рисование траекторий точками
-2. Автоматическое распознавание контуров из изображений
-3. Контурный экстрактор с методами Канни и пороговой обработки
-4. Настройка параметров робота (скорость, масштаб)
-5. Экспорт координат в формат для EV3
+Запуск: python gui_python.py
 
-Структура модулей:
-- gui_modules/config.py - управление конфигурацией
-- gui_modules/models.py - базовые модели данных
-- gui_modules/dialogs.py - диалоговые окна
-- gui_modules/canvas_draw.py - холст для ручного рисования
-- gui_modules/canvas_image.py - холст для работы с изображениями
-- gui_modules/canvas_contour.py - контурный экстрактор
-- gui_modules/main_window.py - главное окно приложения
+Модули:
+  gui_modules/config.py       — конфигурация (масштаб, скорости)
+  gui_modules/models.py       — модель Point
+  gui_modules/dialogs.py      — диалог настроек робота
+  gui_modules/canvas_draw.py  — холст ручного рисования (вкладка 1)
+  gui_modules/canvas_image.py — холст изображений (вкладка 2)
+  gui_modules/canvas_contour.py — контурный экстрактор (вкладка 3)
+  gui_modules/main_window.py  — главное окно
 """
 
 import sys

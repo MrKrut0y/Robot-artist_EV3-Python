@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Модуль диалоговых окон.
-Содержит окно настроек робота.
+Диалоговые окна приложения.
+Содержит окно настроек параметров робота (скорость, масштаб).
 """
 
 from PyQt5.QtWidgets import QDialog, QMessageBox
@@ -10,7 +10,7 @@ from .config import save_config, get_config
 
 
 class SettingsDialog(QDialog, Ui_Dialog):
-    """Диалоговое окно настроек параметров робота."""
+    """Окно настроек: скорость движения, скорость рисования, масштаб."""
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -18,33 +18,24 @@ class SettingsDialog(QDialog, Ui_Dialog):
         self.setModal(True)
         self.setWindowTitle("Настройки робота")
 
-        # Загружаем текущие значения конфигурации
         config = get_config()
-        # spinBox = Скорость движения (TRAVEL_SPEED)
         self.spinBox.setValue(config['travel_speed'])
-        # spinBox_2 = Скорость рисования (DRAW_SPEED)
         self.spinBox_2.setValue(config['draw_speed'])
-        # doubleSpinBox = Масштаб рисунка (SCALE)
         self.doubleSpinBox.setValue(config['scale'])
 
-        # Отключаем автоматические соединения из ui_settings.py
         try:
             self.buttonBox.accepted.disconnect()
             self.buttonBox.rejected.disconnect()
         except:
             pass
 
-        # Привязываем наши обработчики
         self.buttonBox.accepted.connect(self.save_and_accept)
         self.buttonBox.rejected.connect(self.reject)
 
     def save_and_accept(self):
-        """Сохраняет конфигурацию и закрывает окно."""
-        # spinBox = Скорость движения (TRAVEL_SPEED)
+        """Сохраняет настройки в config.cfg и закрывает окно."""
         travel_speed = self.spinBox.value()
-        # spinBox_2 = Скорость рисования (DRAW_SPEED)
         draw_speed = self.spinBox_2.value()
-        # doubleSpinBox = Масштаб рисунка (SCALE)
         scale = self.doubleSpinBox.value()
 
         if save_config(scale, draw_speed, travel_speed):
