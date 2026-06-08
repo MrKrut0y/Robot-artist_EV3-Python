@@ -126,8 +126,10 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.previewButton.clicked.connect(self.preview_processing)
         self.saveResultButton.clicked.connect(self.save_result)
         self.helpButton_3.clicked.connect(self.show_help)
-        self.threshold1Slider.valueChanged.connect(self.update_threshold1_label)
-        self.threshold2Slider.valueChanged.connect(self.update_threshold2_label)
+        self.threshold1Slider.valueChanged.connect(self.threshold1SpinBox.setValue)
+        self.threshold1SpinBox.valueChanged.connect(self.threshold1Slider.setValue)
+        self.threshold2Slider.valueChanged.connect(self.threshold2SpinBox.setValue)
+        self.threshold2SpinBox.valueChanged.connect(self.threshold2Slider.setValue)
         self.thresholdValueSlider.valueChanged.connect(self.update_threshold_value_label)
         self.blurSlider.valueChanged.connect(self.update_blur_label)
         self.qualitySlider.valueChanged.connect(self.update_quality_label)
@@ -200,8 +202,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         else:
             QMessageBox.warning(self, "Предупреждение", "Не удалось упростить контуры.")
 
-    def update_threshold1_label(self, value): self.threshold1ValueLabel.setText(str(value))
-    def update_threshold2_label(self, value): self.threshold2ValueLabel.setText(str(value))
+
     def update_threshold_value_label(self, value): self.thresholdValueLabel.setText(str(value))
 
     def update_blur_label(self, value):
