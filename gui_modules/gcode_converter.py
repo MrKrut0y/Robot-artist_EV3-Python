@@ -46,12 +46,13 @@ class GCodeConverter:
             z_regex = re.compile(r'[ZZ]([0-9.-]+)', re.IGNORECASE)
 
             robot_lines = []
-            
+            point_count = 0
+
             # Текущее состояние (модальные значения ЧПУ)
             curr_x = 0
             curr_y = 0
             is_pen_up = True  # По умолчанию считаем, что перо поднято
-            
+
             with open(file_path, 'r', encoding='utf-8', errors='ignore') as f:
                 lines = f.readlines()
 
@@ -59,7 +60,7 @@ class GCodeConverter:
                 # Очищаем строку от комментариев (все, что после семиколона ; или внутри скобок)
                 line = re.sub(r';.*', '', line)
                 line = re.sub(r'\(.*\)', '', line).strip()
-                
+
                 if not line:
                     continue
 
@@ -91,26 +92,31 @@ class GCodeConverter:
                     curr_x = int(round(float(x_match.group(1))))
                     coord_changed = True
                 if y_match:
-                    # В ЧПУ координатах Y часто инвертирован относительно экранов, 
+                    # В ЧПУ координатах Y часто инвертирован относительно экранов,
                     # но здесь мы просто забираем чистые значения
                     curr_y = int(round(float(y_match.group(1))))
                     coord_changed = True
 
                 # Если координаты изменились, записываем точку в формате робота
                 if coord_changed:
-                    code = PEN_UP_CODE if is_pen_up else 0
-                    robot_lines.append(f"{code} {curr_x} {curr_y}\n")
+                    if is_pen_up:
+                        robot_lines.append(f"{curr_x + PEN_UP_CODE}\n")
+                    else:
+                        robot_lines.append(f"{curr_x}\n")
+                    robot_lines.append(f"{curr_y}\n")
+                    point_count += 1
 
             # 3. Запись результатов в итоговый файл
             if not robot_lines:
                 QMessageBox.warning(
-                    parent_window, 
-                    "Внимание", 
+                    parent_window,
+                    "Внимание",
                     "Файл успешно прочитан, но в нем не найдено совместимых траекторий движения X/Y!"
                 )
                 return
 
-            with open(output_file, "w", encoding="utf-8") as out_f:
+            with open(output_file, "w", encoding="utf-8", newline='\r\n') as out_f:
+                out_f.write(f"{point_count}\n")
                 out_f.writelines(robot_lines)
 
             QMessageBox.information(
@@ -118,7 +124,7 @@ class GCodeConverter:
                 "Успешная конвертация",
                 f"G-код успешно обработан!\n\n"
                 f"Считано строк: {len(lines)}\n"
-                f"Сгенерировано точек: {len(robot_lines)}\n"
+                f"Сгенерировано точек: {point_count}\n"
                 f"Файл сохранен в: ev3-main/{os.path.basename(output_file)}"
             )
 

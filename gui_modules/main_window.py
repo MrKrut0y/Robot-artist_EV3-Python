@@ -18,6 +18,8 @@ from .dialogs import SettingsDialog
 from .canvas_draw import DrawCanvas
 from .canvas_image import ImageCanvas
 from .canvas_contour import ContourExtractor, ImageDisplayWidget
+from .coords_loader import load_robot_coords
+from .gcode_converter import GCodeConverter
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '..', 'ev3-main'))
 from remote_control import execute_robot_deployment, stop_robot # type: ignore
@@ -116,6 +118,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.redButton.clicked.connect(self.toggle_edit_mode)
         self.newLineButton.clicked.connect(self.canvas.new_line)
         self.deleteButton.clicked.connect(self.canvas.delete_last_point)
+        self.uploadCoordsButton.clicked.connect(self.load_coordinates)
         self.helpButton.clicked.connect(self.show_help)
 
         self.uploadButton.clicked.connect(self.load_image_with_message)
@@ -129,10 +132,6 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.previewButton.clicked.connect(self.preview_processing)
         self.saveResultButton.clicked.connect(self.save_result)
         self.helpButton_3.clicked.connect(self.show_help)
-        self.threshold1Slider.valueChanged.connect(self.threshold1SpinBox.setValue)
-        self.threshold1SpinBox.valueChanged.connect(self.threshold1Slider.setValue)
-        self.threshold2Slider.valueChanged.connect(self.threshold2SpinBox.setValue)
-        self.threshold2SpinBox.valueChanged.connect(self.threshold2Slider.setValue)
         self.thresholdValueSlider.valueChanged.connect(self.update_threshold_value_label)
         self.blurSlider.valueChanged.connect(self.update_blur_label)
         self.qualitySlider.valueChanged.connect(self.update_quality_label)
@@ -426,15 +425,73 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         except Exception as e:
             QMessageBox.critical(self, "Ошибка", f"Ошибка сохранения: {e}")
 
+    def load_coordinates(self):
+        """Загружает координаты из файла (G-код или формат робота)."""
+        # Диалог выбора типа файла с кастомными кнопками
+        msg = QMessageBox(self)
+        msg.setWindowTitle('Выбор формата')
+        msg.setText('Какой формат файла вы хотите загрузить?')
+        msg.setIcon(QMessageBox.Question)
+
+        gcode_btn = msg.addButton('G-код', QMessageBox.YesRole)
+        coords_btn = msg.addButton('Координаты робота', QMessageBox.NoRole)
+        cancel_btn = msg.addButton('Отмена', QMessageBox.RejectRole)
+
+        msg.exec_()
+        clicked = msg.clickedButton()
+
+        if clicked == cancel_btn:
+            return
+
+        if clicked == gcode_btn:
+            # Загрузка G-кода - GCodeConverter сам откроет диалог и сконвертирует
+            try:
+                GCodeConverter.convert_gcode_to_robot_format(self)
+
+                # Загружаем сконвертированные координаты
+                ev3_dir = os.path.join(os.path.dirname(__file__), '..', 'ev3-main')
+                coord_file = os.path.join(ev3_dir, "pict_coord.rtf")
+
+                if os.path.exists(coord_file):
+                    points, segments = load_robot_coords(coord_file)
+                    self.canvas.load_points(points, segments)
+                    QMessageBox.information(
+                        self, "Успех",
+                        f"G-код загружен и отображен на холсте!\nТочек: {len(points)}\nСегментов: {len(segments) + 1}"
+                    )
+
+            except Exception as e:
+                QMessageBox.critical(self, "Ошибка", f"Ошибка при загрузке G-кода:\n{str(e)}")
+
+        elif clicked == coords_btn:
+            # Загрузка координат робота
+            file_path, _ = QFileDialog.getOpenFileName(
+                self, "Выберите файл координат", "",
+                "Файлы координат (*.rtf *.txt);;Все файлы (*.*)"
+            )
+
+            if not file_path:
+                return
+
+            try:
+                points, segments = load_robot_coords(file_path)
+                self.canvas.load_points(points, segments)
+                QMessageBox.information(
+                    self, "Успех",
+                    f"Координаты загружены и отображены на холсте!\nТочек: {len(points)}\nСегментов: {len(segments) + 1}"
+                )
+            except Exception as e:
+                QMessageBox.critical(self, "Ошибка", f"Ошибка при загрузке координат:\n{str(e)}")
+
     def show_help(self):
         """Открывает окно справки с описанием программы."""
         help_text = """
         <h2>Программа для управления роботом-художником</h2>
         <h3>Описание программы:</h3>
-        <p>Программа позволяет создавать траектории движения для робота-художника путем рисования точек на координатной сетке или преобразования изображений в координаты.</p>
+        <p>Программа позволяет создавать траектории движения для робота-художника путем рисования точек на координатной сетке, преобразования изображений в координаты или загрузки готовых файлов траекторий.</p>
         <h3>Основные функции:</h3>
         <ul>
-            <li><b>Вкладка 1:</b> Ручное рисование точек и сегментов, редактирование и перемещение существующих точек. Настройки робота. Удаленный запуск робота по bluetooth</li>
+            <li><b>Вкладка 1:</b> Ручное рисование точек и сегментов, редактирование и перемещение существующих точек. Загрузка координат из файлов (G-код или формат робота) для редактирования. Настройки робота. Удаленный запуск робота по bluetooth.</li>
             <li><b>Вкладка 2:</b> Загрузка изображений и автоматическое распознавание контуров с их последующим упрощением.</li>
             <li><b>Вкладка 3:</b> Контурный экстрактор - выделение контуров на изображениях с помощью алгоритмов Канни или пороговой обработки.</li>
         </ul>

@@ -5,6 +5,7 @@
 """
 
 from PyQt5.QtWidgets import QDialog, QMessageBox
+from PyQt5.QtCore import Qt
 from ui_settings import Ui_Dialog
 from .config import save_config, get_config
 
@@ -17,6 +18,9 @@ class SettingsDialog(QDialog, Ui_Dialog):
         self.setupUi(self)
         self.setModal(True)
         self.setWindowTitle("Настройки робота")
+
+        # Убираем кнопку справки из заголовка окна
+        self.setWindowFlags(self.windowFlags() & ~Qt.WindowContextHelpButtonHint)
 
         config = get_config()
         self.spinBox.setValue(config['travel_speed'])

@@ -72,6 +72,14 @@ class DrawCanvas(QWidget):
         self.selected_point = None
         self.update()
 
+    def load_points(self, points: List[Point], segments: List[int]):
+        """Загружает точки и сегменты из внешнего источника."""
+        self.points = points.copy()
+        self.segments = segments.copy()
+        self.selected_point_index = -1
+        self.selected_point = None
+        self.update()
+
     def keyPressEvent(self, event):
         """Обработчик нажатий клавиш."""
         if event.key() == Qt.Key_Space:

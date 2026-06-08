@@ -186,6 +186,24 @@
             </widget>
            </item>
            <item>
+            <widget class="QPushButton" name="uploadCoordsButton">
+             <property name="maximumSize">
+              <size>
+               <width>175</width>
+               <height>30</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <pointsize>10</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>Загрузить координаты</string>
+             </property>
+            </widget>
+           </item>
+           <item>
             <widget class="QPushButton" name="settingsButton">
              <property name="minimumSize">
               <size>
