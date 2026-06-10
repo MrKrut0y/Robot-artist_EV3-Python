@@ -195,7 +195,7 @@ TRAVEL_SPEED=500
 *   [Пересчет координат](https://github.com/MrKrut0y/Robot-artist_EV3-Python/blob/main/dop/Пересчет%20координат.pdf)
 *   [Руководство по MicroPython для EV3](https://github.com/MrKrut0y/Robot-artist_EV3-Python/blob/main/dop/getting-started-with-micropython-v2_enus.pdf)
 *   [Pybricks MicroPython](https://education.lego.com/en-us/product-resources/mindstorms-ev3/teacher-resources/python-for-ev3/)
-*   [ev3dev — альтернативная прошивка для EV3](https://www.ev3dev.org/)
+*   [ev3dev — прошивка для EV3 с инструкцией](https://www.ev3dev.org/)
 *   [Расширение для VS Code](https://marketplace.visualstudio.com/items?itemName=lego-education.ev3-micropython)
 
 ---
